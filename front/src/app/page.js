@@ -34,16 +34,9 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#fff7f7]">
-      <Image
-        src="/img/main_bg.png"
-        alt="main background"
-        fill
-        quality={100}
-        priority
-        className="object-cover object-center"
-      />
-
+    <div className="min-h-screen bg-[#fff7f7]">
+      
+      {/* 헤더 */}
       <header className="relative z-20 flex h-[72px] w-full items-center justify-between bg-white px-6">
         <Link href="/">
           <Image
@@ -95,20 +88,19 @@ export default function Home() {
         )}
       </header>
 
-      <main className="relative z-10 flex flex-col items-center pt-[95px] text-center">
-        <h1 className="text-[64px] font-medium leading-tight text-[#7D5A5A] xl:text-[78px]">
-          나에게 어울리는
-          <br />
-          퍼스널 컬러를 찾아보세요
-        </h1>
-
-        <p className="mt-6 text-[20px] text-[#7D5A5A]">
-          과학적인 진단을 통해 당신만의 색상을 발견하세요
-        </p>
-
+      {/* 메인 */}
+      <main
+        className="relative h-[calc(100vh-72px)] w-full bg-top bg-no-repeat"
+        style={{
+          backgroundImage: "url('/img/main.png?v=3')",
+          backgroundSize: "cover",
+          backgroundPosition: "center 100%",
+        }}
+      >
+        {/* 버튼 위치 */}
         <button
           onClick={startTest}
-          className="mt-8 rounded-full bg-[#F7A4A8] px-10 py-4 text-[20px] text-white"
+          className="absolute left-1/2 top-[46%] z-10 -translate-x-1/2 rounded-full bg-[#F7A4A8] px-10 py-4 text-[20px] text-white"
         >
           진단하기
         </button>
