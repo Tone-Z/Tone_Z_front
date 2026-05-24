@@ -20,9 +20,7 @@ export default function ScanPage() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     startCamera();
 
@@ -32,9 +30,7 @@ export default function ScanPage() {
   }, [mounted]);
 
   useEffect(() => {
-    if (!mounted || !cameraOn) {
-      return;
-    }
+    if (!mounted || !cameraOn) return;
 
     const timer = setInterval(() => {
       setProgress((prev) => {
@@ -42,7 +38,7 @@ export default function ScanPage() {
           clearInterval(timer);
 
           setTimeout(() => {
-            router.push("/result");
+            router.push("/result/spring-light");
           }, 500);
 
           return 100;
@@ -95,13 +91,11 @@ export default function ScanPage() {
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#343434]">
-      <header className="relative z-20 flex h-[72px] w-full items-center px-8">
+    <div className="relative min-h-screen overflow-hidden bg-[#171717]">
+      <header className="relative z-30 flex h-[72px] w-full items-center justify-between px-8">
         <Link href="/">
           <Image
             src="/img/logo.png"
@@ -115,55 +109,31 @@ export default function ScanPage() {
       </header>
 
       <main className="relative h-[calc(100vh-72px)] overflow-hidden">
-        {/* 왼쪽: 곰 아래, 토끼 위 */}
-        <div className="pointer-events-none absolute left-[-55px] top-[355px] z-10">
+        {/* 배경 동물 이미지 */}
+        <div className="pointer-events-none absolute inset-0 z-0">
           <Image
-            src="/img/bear.png"
-            alt="bear"
-            width={460}
-            height={500}
+            src="/img/scan_bg.png"
+            alt="scan background"
+            fill
             priority
-            className="h-auto w-[460px]"
+            className="object-cover"
           />
         </div>
 
-        <div className="pointer-events-none absolute left-[-30px] top-[125px] z-20">
-          <Image
-            src="/img/rabbit.png"
-            alt="rabbit"
-            width={460}
-            height={500}
-            priority
-            className="h-auto w-[460px]"
-          />
+        {/* 위쪽 퍼센트 */}
+        <div className="absolute left-1/2 top-[20px] z-20 -translate-x-1/2 text-center">
+          <div className="flex items-center justify-center gap-6">
+            <span className="text-[34px] text-[#ff9db5]">♥</span>
+            <p className="text-[76px] font-black leading-none text-[#ff91a8] drop-shadow-[0_0_18px_rgba(255,145,168,0.65)]">
+              {progress}%
+            </p>
+            <span className="text-[34px] text-[#ff9db5]">♥</span>
+          </div>
         </div>
 
-        {/* 오른쪽: 햄스터 아래, 여우 위 */}
-        <div className="pointer-events-none absolute right-[-55px] top-[360px] z-10">
-          <Image
-            src="/img/hamster.png"
-            alt="hamster"
-            width={460}
-            height={500}
-            priority
-            className="h-auto w-[460px]"
-          />
-        </div>
-
-        <div className="pointer-events-none absolute right-[-30px] top-[120px] z-20">
-          <Image
-            src="/img/fox.png"
-            alt="fox"
-            width={460}
-            height={500}
-            priority
-            className="h-auto w-[460px]"
-          />
-        </div>
-
-        {/* 중앙 카메라 타원 */}
-        <div className="absolute left-1/2 top-[42%] z-30 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative h-[520px] w-[300px] overflow-hidden rounded-[999px] bg-[#9E9E9E]">
+        {/* 중앙 스캔 박스 */}
+        <div className="absolute left-1/2 top-[47%] z-20 -translate-x-1/2 -translate-y-1/2">
+          <div className="relative h-[430px] w-[560px] overflow-hidden rounded-[42px] border-[5px] border-[#ffd1dc] bg-black shadow-[0_0_35px_rgba(255,145,168,0.75)]">
             <video
               ref={videoRef}
               autoPlay
@@ -173,37 +143,73 @@ export default function ScanPage() {
             />
 
             {!cameraOn && (
-              <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-[16px] text-white">
+              <div className="absolute inset-0 z-20 flex items-center justify-center px-6 text-center text-[18px] text-white">
                 {error ? error : "카메라를 불러오는 중이에요."}
               </div>
             )}
 
-            <div className="pointer-events-none absolute inset-0 rounded-[999px] border-[6px] border-dashed border-white"></div>
+            {/* 모서리 가이드 */}
+            <div className="pointer-events-none absolute left-8 top-8 h-16 w-16 rounded-tl-[16px] border-l-[5px] border-t-[5px] border-white"></div>
+            <div className="pointer-events-none absolute right-8 top-8 h-16 w-16 rounded-tr-[16px] border-r-[5px] border-t-[5px] border-white"></div>
+            <div className="pointer-events-none absolute bottom-8 left-8 h-16 w-16 rounded-bl-[16px] border-b-[5px] border-l-[5px] border-white"></div>
+            <div className="pointer-events-none absolute bottom-8 right-8 h-16 w-16 rounded-br-[16px] border-b-[5px] border-r-[5px] border-white"></div>
+
+            {/* 움직이는 스캔 라인 + 하트 */}
+            <div className="pointer-events-none absolute left-0 top-0 z-30 h-full w-full animate-scanMove">
+              <div className="absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 bg-[#ff8fb0] shadow-[0_0_18px_6px_rgba(255,143,176,0.9)]"></div>
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[40px] text-white drop-shadow-[0_0_12px_rgba(255,143,176,1)]">
+                ♥
+              </div>
+            </div>
+
+            <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 rounded-full bg-[#6f3e4b]/90 px-7 py-2 text-[17px] font-bold text-white">
+              ♥ 얼굴 인식 중...
+            </div>
           </div>
         </div>
 
         {/* 진행바 */}
-        <div className="absolute bottom-[88px] left-1/2 z-30 w-[72%] max-w-[980px] -translate-x-1/2">
-          <div className="h-[28px] w-full overflow-hidden rounded-full bg-[#E8D7D8]">
-            <div
-              className="flex h-full items-center justify-center rounded-full bg-[#F79191] text-[14px] font-medium text-white transition-all duration-200"
-              style={{ width: progress + "%" }}
-            >
-              {progress >= 6 ? progress + "%" : ""}
+        <div className="absolute bottom-[78px] left-1/2 z-20 w-[72%] max-w-[980px] -translate-x-1/2">
+          <div className="flex items-center gap-5">
+            <span className="text-[30px] text-[#ff91a8]">♥</span>
+
+            <div className="h-[32px] flex-1 overflow-hidden rounded-full bg-[#f2dfe2]">
+              <div
+                className="flex h-full items-center justify-center rounded-full bg-[#f78f9b] text-[15px] font-bold text-white transition-all duration-200"
+                style={{ width: progress + "%" }}
+              >
+                {progress >= 6 ? progress + "%" : ""}
+              </div>
             </div>
+
+            <span className="text-[30px] text-[#ff91a8]">♥</span>
           </div>
 
           <div className="mt-5 flex justify-center">
-            <div className="rounded-[10px] bg-[#F2F2F2] px-5 py-3 text-[15px] text-[#1F1F1F]">
-              {cameraOn
-                ? "퍼스널컬러를 측정 중이에요!"
-                : error
-                ? "카메라 연결이 필요해요."
-                : "카메라를 준비 중이에요."}
+            <div className="rounded-[16px] bg-[#fff4f6] px-10 py-4 text-[22px] font-bold text-[#1F1F1F]">
+              ♥ 퍼스널컬러를 측정 중이에요!
             </div>
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes scanMove {
+          0% {
+            transform: translateY(-170px);
+          }
+          50% {
+            transform: translateY(170px);
+          }
+          100% {
+            transform: translateY(-170px);
+          }
+        }
+
+        .animate-scanMove {
+          animation: scanMove 2.2s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 }

@@ -7,27 +7,12 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [showMenu, setShowMenu] = useState(false);
-
   const router = useRouter();
 
   useEffect(() => {
     const data = sessionStorage.getItem("loginUser");
-
-    if (data) {
-      setUser(JSON.parse(data));
-    } else {
-      setUser(null);
-    }
+    setUser(data ? JSON.parse(data) : null);
   }, []);
-
-  const logout = () => {
-    sessionStorage.removeItem("loginUser");
-    localStorage.removeItem("loginUser");
-    setUser(null);
-    setShowMenu(false);
-    router.refresh();
-  };
 
   const startTest = () => {
     router.push("/scan");
@@ -51,24 +36,11 @@ export default function Home() {
         </Link>
 
         {user ? (
-          <div className="relative">
-            <div
-              onClick={() => setShowMenu(!showMenu)}
-              className="cursor-pointer rounded-full border border-[#f3b7bc] px-4 py-2 text-[#f3a0a8]"
-            >
-              {user.nickname}님
-            </div>
-
-            {showMenu && (
-              <div className="absolute right-0 mt-2 w-[120px] rounded-lg border bg-white shadow-md">
-                <button
-                  onClick={logout}
-                  className="w-full py-2 text-[16px] text-[#444444] hover:bg-[#ffe3e3]"
-                >
-                  로그아웃
-                </button>
-              </div>
-            )}
+          <div
+            onClick={() => router.push("/mypage")}
+            className="cursor-pointer rounded-full border border-[#f3b7bc] px-4 py-2 text-[#f3a0a8]"
+          >
+            {user.nickname}님
           </div>
         ) : (
           <Link

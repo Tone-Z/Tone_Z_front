@@ -1,0 +1,74 @@
+import nodemailer from "nodemailer";
+import { readFile } from "fs/promises";
+import path from "path";
+
+async function uploadToImgbb(imageBuffer) {
+  const base64 = imageBuffer.toString("base64");
+  const formData = new URLSearchParams();
+  formData.append("key", process.env.IMGBB_API_KEY);
+  formData.append("image", base64);
+
+  const res = await fetch("https://api.imgbb.com/1/upload", {
+    method: "POST",
+    body: formData,
+  });
+  const json = await res.json();
+  if (!json.success) throw new Error("imgbb 업로드 실패: " + JSON.stringify(json));
+  return json.data.url;
+}
+
+export async function POST(request) {
+  const { to, filename, userName = "사용자" } = await request.json();
+
+  if (!to || !filename) {
+    return Response.json({ ok: false, message: "필수 값이 없습니다." }, { status: 400 });
+  }
+
+  let imageBuffer;
+  try {
+    const filePath = path.join(process.cwd(), "public", "photocards", filename);
+    imageBuffer = await readFile(filePath);
+  } catch {
+    return Response.json({ ok: false, message: "저장된 이미지를 찾을 수 없어요." }, { status: 404 });
+  }
+
+  let imageUrl;
+  try {
+    imageUrl = await uploadToImgbb(imageBuffer);
+  } catch (err) {
+    console.error("[photocard-email] imgbb 업로드 실패:", err.message);
+    return Response.json({ ok: false, message: "이미지 업로드 실패: " + err.message }, { status: 500 });
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  try {
+    await transporter.sendMail({
+      from: `"Tone-Z" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: `${userName}의 Tone-Z 네컷사진이 완성됐어요!`,
+      text: `${userName}만의 네컷사진이 완성됐어요! Tone-Z에서 보내드린 메일입니다.`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background: #fff8f8; border-radius: 16px;">
+          <h2 style="color: #ff7070; margin-bottom: 8px;">Tone-Z 네컷사진</h2>
+          <p style="color: #555; font-size: 16px; margin-bottom: 24px;">
+            ${userName}만의 네컷사진이 완성됐어요! 🎞️
+          </p>
+          <img src="${imageUrl}" style="width: 100%; border-radius: 12px; display: block;" alt="네컷사진" />
+          <p style="color: #bbb; font-size: 12px; margin-top: 24px;">Tone-Z에서 보내드린 메일입니다.</p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error("[photocard-email] 전송 실패:", err.message);
+    return Response.json({ ok: false, message: "전송 실패: " + err.message }, { status: 500 });
+  }
+
+  return Response.json({ ok: true });
+}
