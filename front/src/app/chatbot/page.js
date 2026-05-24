@@ -149,7 +149,7 @@ export default function ChatbotPage() {
         <aside className="w-[220px] flex-shrink-0 flex flex-col bg-[#f9f0f1] border-r border-[#f0e0e0]">
           <div className="px-5 py-4 border-b border-[#f0e0e0]">
             <Link href="/">
-              <img src="/img/logo.png" alt="Tone-Z" className="h-[28px]" />
+              <img src="/img/logo.png" alt="Tone-Z" className="h-[40px]" />
             </Link>
           </div>
           <button
@@ -177,10 +177,10 @@ export default function ChatbotPage() {
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="flex items-center justify-between px-6 py-3 border-b border-[#f0e0e0] bg-white flex-shrink-0">
+        <header className="flex items-center justify-between px-8 py-4 border-b border-[#f0e0e0] bg-white flex-shrink-0">
           {!user ? (
             <Link href="/">
-              <img src="/img/logo.png" alt="Tone-Z" className="h-[28px]" />
+              <img src="/img/logo.png" alt="Tone-Z" className="h-[40px]" />
             </Link>
           ) : (
             <div />
@@ -189,12 +189,12 @@ export default function ChatbotPage() {
             {user ? (
               <button
                 onClick={() => router.push("/mypage")}
-                className="text-[13px] text-[#ff8b87]"
+                className="text-[20px] text-[#ff8b87]"
               >
                 {user.nickname}님
               </button>
             ) : (
-              <Link href="/login" className="text-[13px] text-[#ff8b87]">
+              <Link href="/login" className="text-[20px] text-[#ff8b87]">
                 로그인
               </Link>
             )}
@@ -214,19 +214,17 @@ export default function ChatbotPage() {
               </p>
             </div>
           ) : (
-            <div className="max-w-[720px] mx-auto w-full px-4 py-6 space-y-4">
+            <div className="max-w-[800px] mx-auto w-full px-6 py-8 space-y-6">
               {messages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} items-end gap-2`}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} items-end gap-3`}
                 >
                   {msg.role === "assistant" && (
-                    <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#ffb7b1] to-[#ff7070] flex-shrink-0 flex items-center justify-center">
-                      <img src="/img/chatbot_icon.png" className="w-[18px]" />
-                    </div>
+                    <img src="/img/chatbot_icon.png" className="w-[44px] h-[44px] flex-shrink-0" />
                   )}
                   <div
-                    className={`max-w-[72%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed whitespace-pre-wrap ${
+                    className={`max-w-[72%] rounded-2xl px-5 py-4 text-[16px] leading-relaxed whitespace-pre-wrap ${
                       msg.role === "user"
                         ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white rounded-br-sm"
                         : "bg-white text-[#444] shadow-sm rounded-bl-sm"
@@ -237,11 +235,9 @@ export default function ChatbotPage() {
                 </div>
               ))}
               {loading && (
-                <div className="flex justify-start items-end gap-2">
-                  <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#ffb7b1] to-[#ff7070] flex-shrink-0 flex items-center justify-center">
-                    <img src="/img/chatbot_icon.png" className="w-[18px]" />
-                  </div>
-                  <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 text-[14px] text-[#bbb] shadow-sm">
+                <div className="flex justify-start items-end gap-3">
+                  <img src="/img/chatbot_icon.png" className="w-[44px] h-[44px] flex-shrink-0" />
+                  <div className="bg-white rounded-2xl rounded-bl-sm px-5 py-4 text-[16px] text-[#bbb] shadow-sm">
                     생각 중...
                   </div>
                 </div>
@@ -252,34 +248,34 @@ export default function ChatbotPage() {
         </div>
 
         {/* Input area */}
-        <div className="flex-shrink-0 px-4 py-4 bg-white border-t border-[#f0e0e0]">
-          <div className="max-w-[720px] mx-auto">
-            <div className="flex items-center gap-3 rounded-2xl border border-[#eeeeee] bg-[#fdf8f8] px-4 py-3">
+        <div className="flex-shrink-0 px-6 py-5 bg-white border-t border-[#f0e0e0]">
+          <div className="max-w-[800px] mx-auto">
+            <div className="flex items-center gap-3 rounded-2xl border border-[#eeeeee] bg-[#fdf8f8] px-5 py-4">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                 placeholder="무엇이든 물어보세요"
-                className="flex-1 bg-transparent text-[14px] text-[#333] outline-none placeholder:text-[#ccc]"
+                className="flex-1 bg-transparent text-[16px] text-[#333] outline-none placeholder:text-[#ccc]"
               />
               <button
                 onClick={() => sendMessage()}
                 disabled={loading || !input.trim()}
-                className="w-[36px] h-[36px] rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] flex items-center justify-center disabled:opacity-40 transition flex-shrink-0"
+                className="w-[44px] h-[44px] rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] flex items-center justify-center disabled:opacity-40 transition flex-shrink-0"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-5 h-5">
                   <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                 </svg>
               </button>
             </div>
             {showKeywords && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-3">
                 {keywords.map((kw, i) => (
                   <button
                     key={i}
                     onClick={() => sendMessage(kw)}
-                    className="rounded-full border border-[#f0e0e0] bg-white px-4 py-2 text-[13px] text-[#666] hover:bg-[#fff0f0] hover:border-[#ffb7b1] transition"
+                    className="rounded-full border border-[#f0e0e0] bg-white px-5 py-2.5 text-[15px] text-[#666] hover:bg-[#fff0f0] hover:border-[#ffb7b1] transition"
                   >
                     {i === 0 && <span className="mr-1">🌸</span>}
                     {kw}

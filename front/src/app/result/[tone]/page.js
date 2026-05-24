@@ -526,7 +526,7 @@ function BottomButtons({ data, tone }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              className="mb-3 w-full rounded-xl border border-[#eee] px-4 py-3 text-[14px] outline-none focus:border-[#ffb7b1]"
+              className="mb-3 w-full rounded-xl border border-[#eee] px-4 py-3 text-[14px] text-[#111] outline-none focus:border-[#ffb7b1]"
             />
             {status && <p className="mb-3 text-[13px] text-[#ff8b87]">{status}</p>}
             <div className="flex gap-3">
