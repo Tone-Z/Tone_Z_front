@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toneData } from "../data";
 
@@ -8,6 +8,7 @@ export default function ResultPage({ params }) {
   const { tone } = use(params);
   const data = toneData[tone];
   const [userName, setUserName] = useState("사용자");
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     sessionStorage.setItem("user_tone", tone);
@@ -38,8 +39,9 @@ export default function ResultPage({ params }) {
         <MakeupSection data={data} />
         <VideoSection data={data} />
         <TipSection data={data} />
-        <BottomButtons data={data} tone={tone} />
+        <BottomButtons data={data} tone={tone} onChatOpen={() => setChatOpen(true)} />
       </div>
+      <ChatPanel open={chatOpen} onClose={() => setChatOpen(false)} tone={tone} />
     </main>
   );
 }
@@ -69,19 +71,30 @@ function ResultHeader({ data, userName }) {
 
       <div className="absolute left-[43%] top-[30%] w-[45%]">
         <p
-          className="mb-[1vw] text-[clamp(10px,1vw,16px)]"
+          className="mb-[1.2vw] text-[clamp(12px,1.2vw,18px)]"
           style={{ color: data.mainColor }}
         >
           {userName}님의 퍼스널 컬러는
         </p>
 
         <h1
-          className="whitespace-pre-line text-[clamp(22px,2.3vw,42px)] font-bold leading-[1.35]"
+          className="whitespace-nowrap text-[clamp(19px,2vw,36px)] font-bold leading-[1.35] mb-[1.2vw]"
           style={{ color: data.mainColor }}
-          dangerouslySetInnerHTML={{ __html: data.title }}
-        />
+        >
+          {(() => {
+            const idx = data.title.lastIndexOf("입니다");
+            if (idx === -1) return data.title;
+            return (
+              <>
+                {data.title.substring(0, idx)}
+                <span className="font-normal text-[clamp(12px,1.2vw,18px)]">입니다.</span>
+              </>
+            );
+          })()}
+        </h1>
 
         <p
+          className="mb-[1.2vw] text-[clamp(11px,1vw,16px)] whitespace-pre-line leading-relaxed"
           style={{
             color: data.descColor,
           }}
@@ -89,11 +102,11 @@ function ResultHeader({ data, userName }) {
           {data.desc}
         </p>
 
-        <div className="mt-[1vw] flex flex-wrap gap-2">
+        <div className="mt-[3vw] flex flex-wrap gap-3">
           {data.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full px-4 py-1 text-[clamp(9px,0.8vw,13px)] font-semibold text-white"
+              className="rounded-md px-5 py-2 text-[clamp(13px,1.2vw,19px)] font-semibold text-white"
               style={{ backgroundColor: data.badgeColor }}
             >
               #{tag}
@@ -480,7 +493,7 @@ function TipSection({ data }) {
   );
 }
 
-function BottomButtons({ data, tone }) {
+function BottomButtons({ data, tone, onChatOpen }) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState("");
@@ -576,12 +589,207 @@ function BottomButtons({ data, tone }) {
       </div>
 
       <button
-        onClick={() => router.push("/chatbot")}
-        className="fixed bottom-8 right-8 h-[70px] w-[70px]"
+        onClick={onChatOpen}
+        className="fixed bottom-8 right-8 h-[80px] w-[80px]"
       >
         <img src="/img/chatbot_icon.png" alt="챗봇" className="h-full w-full" />
       </button>
     </section>
     </>
+  );
+}
+
+function getToneKeywords(tone) {
+  if (!tone) return ["봄웜 코디 추천", "여름쿨 립 추천", "가을웜 코디 추천", "겨울쿨 코디 추천"];
+  if (tone.startsWith("spring")) return ["봄웜 유튜버 추천", "봄웜 립 추천", "봄웜 치크 추천", "봄웜 코디 추천"];
+  if (tone.startsWith("summer")) return ["여름쿨 유튜버 추천", "여름쿨 립 추천", "여름쿨 블러셔 추천", "여름쿨 코디 추천"];
+  if (tone.startsWith("autumn")) return ["가을웜 유튜버 추천", "가을웜 립 추천", "가을웜 치크 추천", "가을웜 코디 추천"];
+  if (tone.startsWith("winter")) return ["겨울쿨 유튜버 추천", "겨울쿨 립 추천", "겨울쿨 블러셔 추천", "겨울쿨 코디 추천"];
+  return ["봄웜 코디 추천", "여름쿨 립 추천", "가을웜 코디 추천", "겨울쿨 코디 추천"];
+}
+
+function ChatPanel({ open, onClose, tone }) {
+  const [user, setUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showKeywords, setShowKeywords] = useState(true);
+  const [position, setPosition] = useState(null);
+  const messagesEndRef = useRef(null);
+  const isDragging = useRef(false);
+  const dragStart = useRef({ mouseX: 0, mouseY: 0, panelX: 0, panelY: 0 });
+  const keywords = getToneKeywords(tone);
+
+  useEffect(() => {
+    setPosition({ x: window.innerWidth - 460 - 24, y: window.innerHeight - 680 - 24 });
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      setPosition({ x: window.innerWidth - 460 - 24, y: window.innerHeight - 680 - 24 });
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!isDragging.current) return;
+      const dx = e.clientX - dragStart.current.mouseX;
+      const dy = e.clientY - dragStart.current.mouseY;
+      setPosition({
+        x: Math.max(0, Math.min(window.innerWidth - 460, dragStart.current.panelX + dx)),
+        y: Math.max(0, Math.min(window.innerHeight - 680, dragStart.current.panelY + dy)),
+      });
+    };
+    const onMouseUp = () => { isDragging.current = false; };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, []);
+
+  const handleDragStart = (e) => {
+    if (!position) return;
+    isDragging.current = true;
+    dragStart.current = { mouseX: e.clientX, mouseY: e.clientY, panelX: position.x, panelY: position.y };
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("loginUser");
+    let nickname = "사용자";
+    if (stored) {
+      try {
+        const u = JSON.parse(stored);
+        setUser(u);
+        nickname = u.nickname || "사용자";
+      } catch {}
+    }
+    setMessages([{
+      role: "assistant",
+      content: `안녕 ${nickname}님! 톤즈에요!! 오늘은 뷰티 관련해서 어떤 도와줄 일이 있나요? 💄👀`,
+    }]);
+  }, []);
+
+  useEffect(() => {
+    if (open) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, open]);
+
+  const sendMessage = async (text) => {
+    const msg = (text || input).trim();
+    if (!msg || loading) return;
+    setInput("");
+    setShowKeywords(false);
+    const newMessages = [...messages, { role: "user", content: msg }];
+    setMessages(newMessages);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg, history: messages, tone, userId: user?.id, userName: user?.nickname }),
+      });
+      const json = await res.json();
+      setMessages([...newMessages, {
+        role: "assistant",
+        content: json.ok ? json.reply : "오류: " + (json.message || "알 수 없는 오류"),
+      }]);
+    } catch (e) {
+      setMessages([...newMessages, { role: "assistant", content: "연결 실패: " + e.message }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className={`fixed z-50 flex flex-col w-[460px] rounded-2xl bg-white shadow-2xl border border-[#f0e0e0] transition-opacity duration-300 ${
+        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}
+      style={{
+        height: "680px",
+        ...(position ? { left: position.x, top: position.y } : { right: 24, bottom: 24 }),
+      }}
+    >
+      {/* 헤더 — 드래그 핸들 */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 rounded-t-2xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] flex-shrink-0 cursor-move select-none"
+        onMouseDown={handleDragStart}
+      >
+        <img src="/img/chatbot_icon.png" alt="chatbot" className="w-11 h-11" />
+        <span className="text-white font-semibold text-[15px]">톤즈 뷰티 챗봇</span>
+        <button
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={onClose}
+          className="ml-auto text-white/80 hover:text-white text-2xl leading-none"
+        >×</button>
+      </div>
+
+      {/* 메시지 영역 */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+        {messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} items-end gap-2`}>
+            {msg.role === "assistant" && (
+              <img src="/img/chatbot_icon.png" className="w-9 h-9 flex-shrink-0" />
+            )}
+            <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap ${
+              msg.role === "user"
+                ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white rounded-br-sm"
+                : "bg-[#f8f8f8] text-[#444] rounded-bl-sm"
+            }`}>
+              {msg.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div className="flex justify-start items-end gap-2">
+            <img src="/img/chatbot_icon.png" className="w-7 h-7 flex-shrink-0" />
+            <div className="bg-[#f8f8f8] rounded-2xl rounded-bl-sm px-4 py-2.5 text-[13px] text-[#bbb]">
+              생각 중...
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* 키워드 */}
+      {showKeywords && (
+        <div className="px-4 pb-2 flex flex-wrap gap-2 flex-shrink-0">
+          {keywords.map((kw, i) => (
+            <button
+              key={i}
+              onClick={() => sendMessage(kw)}
+              className="rounded-full border border-[#f0e0e0] bg-white px-3 py-1.5 text-[12px] text-[#666] hover:bg-[#fff0f0] hover:border-[#ffb7b1] transition"
+            >
+              {kw}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 입력 */}
+      <div className="px-4 pb-4 flex-shrink-0">
+        <div className="flex items-center gap-2 rounded-xl border border-[#eee] bg-[#fdf8f8] px-4 py-2.5">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+            placeholder="무엇이든 물어보세요"
+            className="flex-1 bg-transparent text-[13px] text-[#333] outline-none placeholder:text-[#ccc]"
+          />
+          <button
+            onClick={() => sendMessage()}
+            disabled={loading || !input.trim()}
+            className="w-8 h-8 rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] flex items-center justify-center disabled:opacity-40 transition flex-shrink-0"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4">
+              <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
