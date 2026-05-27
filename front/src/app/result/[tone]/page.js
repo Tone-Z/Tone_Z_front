@@ -615,32 +615,54 @@ function ChatPanel({ open, onClose, tone }) {
   const [loading, setLoading] = useState(false);
   const [showKeywords, setShowKeywords] = useState(true);
   const [position, setPosition] = useState(null);
+  const [size, setSize] = useState({ width: 380, height: 560 });
+  const sizeRef = useRef({ width: 380, height: 560 });
   const messagesEndRef = useRef(null);
   const isDragging = useRef(false);
   const dragStart = useRef({ mouseX: 0, mouseY: 0, panelX: 0, panelY: 0 });
+  const isResizing = useRef(false);
+  const resizeStart = useRef({ mouseX: 0, mouseY: 0, w: 380, h: 560 });
   const keywords = getToneKeywords(tone);
 
+  useEffect(() => { sizeRef.current = size; }, [size]);
+
   useEffect(() => {
-    setPosition({ x: window.innerWidth - 460 - 24, y: window.innerHeight - 680 - 24 });
+    setPosition({ x: window.innerWidth - 380 - 24, y: window.innerHeight - 560 - 24 });
   }, []);
 
   useEffect(() => {
     if (open) {
-      setPosition({ x: window.innerWidth - 460 - 24, y: window.innerHeight - 680 - 24 });
+      setPosition({ x: window.innerWidth - 380 - 24, y: window.innerHeight - 560 - 24 });
+      setSize({ width: 380, height: 560 });
+      sizeRef.current = { width: 380, height: 560 };
     }
   }, [open]);
 
   useEffect(() => {
     const onMouseMove = (e) => {
+      if (isResizing.current) {
+        const dw = e.clientX - resizeStart.current.mouseX;
+        const dh = e.clientY - resizeStart.current.mouseY;
+        const newSize = {
+          width: Math.max(320, Math.min(700, resizeStart.current.w + dw)),
+          height: Math.max(400, Math.min(900, resizeStart.current.h + dh)),
+        };
+        sizeRef.current = newSize;
+        setSize(newSize);
+        return;
+      }
       if (!isDragging.current) return;
       const dx = e.clientX - dragStart.current.mouseX;
       const dy = e.clientY - dragStart.current.mouseY;
       setPosition({
-        x: Math.max(0, Math.min(window.innerWidth - 460, dragStart.current.panelX + dx)),
-        y: Math.max(0, Math.min(window.innerHeight - 680, dragStart.current.panelY + dy)),
+        x: Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, dragStart.current.panelX + dx)),
+        y: Math.max(0, Math.min(window.innerHeight - sizeRef.current.height, dragStart.current.panelY + dy)),
       });
     };
-    const onMouseUp = () => { isDragging.current = false; };
+    const onMouseUp = () => {
+      isDragging.current = false;
+      isResizing.current = false;
+    };
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
     return () => {
@@ -653,6 +675,13 @@ function ChatPanel({ open, onClose, tone }) {
     if (!position) return;
     isDragging.current = true;
     dragStart.current = { mouseX: e.clientX, mouseY: e.clientY, panelX: position.x, panelY: position.y };
+    e.preventDefault();
+  };
+
+  const handleResizeStart = (e) => {
+    e.stopPropagation();
+    isResizing.current = true;
+    resizeStart.current = { mouseX: e.clientX, mouseY: e.clientY, w: size.width, h: size.height };
     e.preventDefault();
   };
 
@@ -704,11 +733,12 @@ function ChatPanel({ open, onClose, tone }) {
 
   return (
     <div
-      className={`fixed z-50 flex flex-col w-[460px] rounded-2xl bg-white shadow-2xl border border-[#f0e0e0] transition-opacity duration-300 ${
+      className={`fixed z-50 flex flex-col rounded-2xl bg-white shadow-2xl border border-[#f0e0e0] transition-opacity duration-300 ${
         open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
       style={{
-        height: "680px",
+        width: size.width,
+        height: size.height,
         ...(position ? { left: position.x, top: position.y } : { right: 24, bottom: 24 }),
       }}
     >
@@ -790,6 +820,12 @@ function ChatPanel({ open, onClose, tone }) {
           </button>
         </div>
       </div>
+      {/* 리사이즈 핸들 */}
+      <div
+        onMouseDown={handleResizeStart}
+        className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize rounded-br-2xl"
+        style={{ background: "linear-gradient(135deg, transparent 50%, #ffb7b1 50%)" }}
+      />
     </div>
   );
 }
