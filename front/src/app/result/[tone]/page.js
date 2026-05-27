@@ -298,11 +298,75 @@ function MakeupSection({ data }) {
   );
 }
 
+function VideoCard({ video, isLarge, playing, onPlay }) {
+  const thumbH = "h-[22vw] max-h-[320px] min-h-[180px]";
+  const wrap = `w-full overflow-hidden rounded-2xl border border-[#eee] bg-white ${isLarge ? "shadow-md" : "shadow-sm"}`;
+
+  if (!video) return (
+    <div className={wrap}>
+      <div className={`${thumbH} ${isLarge ? "bg-[#ffeaea]" : "bg-[#ffdede]"}`} />
+    </div>
+  );
+
+  if (isLarge && playing) return (
+    <div className={wrap}>
+      <iframe
+        className={`w-full ${thumbH}`}
+        src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1`}
+        title={video.title}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+      <p className="line-clamp-2 p-4 text-left text-[clamp(11px,0.9vw,14px)] text-[#777]">{video.title}</p>
+      <p className="px-4 pb-3 text-[10px] text-[#bbb]">{video.channel}</p>
+    </div>
+  );
+
+  return (
+    <div className={`${wrap}${isLarge ? " cursor-pointer" : ""}`} onClick={isLarge ? onPlay : undefined}>
+      <div className="relative overflow-hidden">
+        <img
+          src={video.thumbnail}
+          alt={video.title}
+          className={`w-full object-cover ${thumbH}`}
+          onError={(e) => { e.target.src = video.thumbnailFallback; }}
+        />
+        {isLarge && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition hover:opacity-100">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
+              <span className="ml-1 text-xl text-red-500">▶</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <p className={`line-clamp-2 text-left text-[#777] ${isLarge ? "p-4 text-[clamp(11px,0.9vw,14px)]" : "p-2 text-[10px]"}`}>
+        {video.title}
+      </p>
+      {isLarge && <p className="px-4 pb-3 text-[10px] text-[#bbb]">{video.channel}</p>}
+    </div>
+  );
+}
+
+// 모든 카드: left 28%, width 44% 고정 → transform만 GPU로 변경
+// translateX: 카드 자신의 width(44%) 기준 %
+//   left 슬롯:  center(50%) → 13%  차이 37% of container = 84% of card
+//   right 슬롯: center(50%) → 87%  차이 37% of container = 84% of card
+//   off 슬롯:   container 밖 65% of container = 148% of card
+const CARD_TRANSFORM = {
+  offLeft:  { transform: "translate(-148%, -50%) scale(0.5)", opacity: 0, zIndex: 1 },
+  left:     { transform: "translate(-84%,  -50%) scale(0.5)", opacity: 1, zIndex: 5 },
+  center:   { transform: "translate(0%,    -50%) scale(1)",   opacity: 1, zIndex: 10 },
+  right:    { transform: "translate(84%,   -50%) scale(0.5)", opacity: 1, zIndex: 5 },
+  offRight: { transform: "translate(148%,  -50%) scale(0.5)", opacity: 0, zIndex: 1 },
+};
+
 function VideoSection({ data }) {
-  const [center, setCenter] = useState(1);
-  const [move, setMove] = useState(false);
   const [videos, setVideos] = useState([]);
+  const [center, setCenter] = useState(1);
   const [playing, setPlaying] = useState(false);
+  const [animDir, setAnimDir] = useState(null);
+  const [animating, setAnimating] = useState(false);
+  const isChanging = useRef(false);
 
   useEffect(() => {
     async function getVideos() {
@@ -327,126 +391,99 @@ function VideoSection({ data }) {
   }, [data.koreanType]);
 
   const changeVideo = (type) => {
-    if (videos.length === 0) return;
+    if (videos.length === 0 || isChanging.current) return;
     setPlaying(false);
-    setMove(true);
-    setTimeout(() => {
-      if (type === "prev") {
-        setCenter((prev) => (prev === 0 ? videos.length - 1 : prev - 1));
-      } else {
-        setCenter((prev) => (prev === videos.length - 1 ? 0 : prev + 1));
-      }
-      setMove(false);
-    }, 180);
+    isChanging.current = true;
+    setAnimDir(type);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setAnimating(true);
+        setTimeout(() => {
+          setCenter(prev =>
+            type === "next"
+              ? (prev + 1) % videos.length
+              : (prev - 1 + videos.length) % videos.length
+          );
+          setAnimating(false);
+          setAnimDir(null);
+          isChanging.current = false;
+        }, 360);
+      });
+    });
   };
 
-  const getVideo = (offset) => {
-    if (videos.length === 0) return null;
-    return videos[(center + offset + videos.length) % videos.length];
-  };
+  const getVideoAt = (offset) =>
+    videos.length === 0 ? null : videos[(center + offset + videos.length) % videos.length];
 
-  const VideoCard = ({ video, size }) => {
-    const isLarge = size === "large";
-    const wrapClass = isLarge
-      ? "w-[70%] overflow-hidden rounded-2xl border border-[#eee] bg-white shadow-md transition-all duration-500 md:w-[44%]"
-      : "hidden w-[22%] overflow-hidden rounded-2xl border border-[#eee] bg-white shadow-sm md:block";
-    const thumbClass = isLarge
-      ? "h-[24vw] max-h-[340px] min-h-[210px]"
-      : "h-[12vw] max-h-[170px] min-h-[115px]";
+  const getVideoIdx = (offset) => (center + offset + videos.length) % videos.length;
 
-    if (!video) {
-      return (
-        <div className={wrapClass}>
-          <div className={thumbClass + (isLarge ? " bg-[#ffeaea]" : " bg-[#ffdede]")} />
-        </div>
-      );
-    }
-
-    if (isLarge && playing) {
-      return (
-        <div className={wrapClass}>
-          <iframe
-            className={"w-full " + thumbClass}
-            src={"https://www.youtube.com/embed/" + video.videoId + "?autoplay=1"}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-          <p className="line-clamp-2 p-5 text-left text-[clamp(12px,1vw,16px)] text-[#777]">
-            {video.title}
-          </p>
-          <p className="px-4 pb-3 text-[11px] text-[#bbb]">{video.channel}</p>
-        </div>
-      );
-    }
-
-    return (
-      <div
-        className={wrapClass + (isLarge ? " cursor-pointer" : "")}
-        onClick={isLarge ? () => setPlaying(true) : undefined}
-      >
-        <div className="relative overflow-hidden">
-          <img
-            src={video.thumbnail}
-            alt={video.title}
-            className={"w-full object-cover " + thumbClass}
-            onError={(e) => { e.target.src = video.thumbnailFallback; }}
-          />
-          {isLarge && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition hover:opacity-100">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                <span className="ml-1 text-xl text-red-500">▶</span>
-              </div>
-            </div>
-          )}
-        </div>
-        <p
-          className={
-            "line-clamp-2 text-left text-[#777] " +
-            (isLarge ? "p-5 text-[clamp(12px,1vw,16px)]" : "p-4 text-sm")
-          }
-        >
-          {video.title}
-        </p>
-        <p className="px-4 pb-3 text-[11px] text-[#bbb]">{video.channel}</p>
-      </div>
-    );
-  };
+  // 어떤 카드를 어떤 위치에 렌더할지 결정
+  let slots;
+  if (!animDir) {
+    slots = [
+      { offset: -1, pos: "left" },
+      { offset:  0, pos: "center" },
+      { offset:  1, pos: "right" },
+    ];
+  } else if (animDir === "next") {
+    slots = [
+      { offset: -1, pos: animating ? "offLeft"  : "left"     },
+      { offset:  0, pos: animating ? "left"     : "center"   },
+      { offset:  1, pos: animating ? "center"   : "right"    },
+      { offset:  2, pos: animating ? "right"    : "offRight" },
+    ];
+  } else {
+    slots = [
+      { offset: -2, pos: animating ? "left"     : "offLeft"  },
+      { offset: -1, pos: animating ? "center"   : "left"     },
+      { offset:  0, pos: animating ? "right"    : "center"   },
+      { offset:  1, pos: animating ? "offRight" : "right"    },
+    ];
+  }
 
   return (
     <section className="px-[8%] py-[7%] text-center">
       <h2 className="mb-10 text-[clamp(13px,1vw,18px)] font-bold text-[#999]">
         {data.koreanType} 메이크업 가이드
       </h2>
-
       {videos.length === 0 ? (
         <p className="text-[#999]">영상을 불러오는 중이에요...</p>
       ) : (
-        <div
-          className={
-            "flex items-center justify-center gap-10 transition-all duration-300 " +
-            (move ? "translate-x-3 opacity-70" : "translate-x-0 opacity-100")
-          }
-        >
-          <VideoCard video={getVideo(-1)} size="small" />
-
+        <div className="relative overflow-hidden" style={{ height: "clamp(300px, 30vw, 460px)" }}>
+          {slots.map(({ offset, pos }) => (
+            <div
+              key={getVideoIdx(offset)}
+              className="absolute"
+              style={{
+                left: "28%",
+                top: "50%",
+                width: "44%",
+                transformOrigin: "center center",
+                ...CARD_TRANSFORM[pos],
+                transition: animDir
+                  ? "transform 0.38s ease-out, opacity 0.28s ease-out"
+                  : "none",
+              }}
+            >
+              <VideoCard
+                video={getVideoAt(offset)}
+                isLarge={pos === "center"}
+                playing={playing}
+                onPlay={() => setPlaying(true)}
+              />
+            </div>
+          ))}
+          {/* 네비게이션 버튼 — 중앙 카드 양쪽 여백에 고정 */}
           <button
             onClick={() => changeVideo("prev")}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
-          >
-            ‹
-          </button>
-
-          <VideoCard video={getVideo(0)} size="large" />
-
+            className="absolute z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
+            style={{ left: "calc(26% - 20px)", top: "50%" }}
+          >‹</button>
           <button
             onClick={() => changeVideo("next")}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
-          >
-            ›
-          </button>
-
-          <VideoCard video={getVideo(1)} size="small" />
+            className="absolute z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
+            style={{ left: "calc(74% - 20px)", top: "50%" }}
+          >›</button>
         </div>
       )}
     </section>
