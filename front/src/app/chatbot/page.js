@@ -124,7 +124,10 @@ export default function ChatbotPage() {
       });
       const json = await res.json();
       if (json.ok) {
-        setMessages([...newMessages, { role: "assistant", content: json.reply }]);
+        const baseMessages = json.censoredMessage
+          ? [...messages, { role: "user", content: json.censoredMessage }]
+          : newMessages;
+        setMessages([...baseMessages, { role: "assistant", content: json.reply }]);
         if (json.conversationId && !currentConvId) {
           setCurrentConvId(json.conversationId);
           if (user) fetchConversations(user.id);
