@@ -4,9 +4,9 @@ const db = require("../db");
 
 // 포토카드 저장
 router.post("/save", function (req, res) {
-    const { userId, filename } = req.body;
-    const sql = "INSERT INTO photocards (user_id, filename) VALUES (?, ?)";
-    db.query(sql, [userId ?? null, filename], function (err) {
+    const { userId, filename, url } = req.body;
+    const sql = "INSERT INTO photocards (user_id, filename, url) VALUES (?, ?, ?)";
+    db.query(sql, [userId ?? null, filename, url ?? null], function (err) {
         if (err) {
             console.error("photocard save error:", err);
             return res.status(500).json({ ok: false });

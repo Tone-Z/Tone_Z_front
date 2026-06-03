@@ -1,44 +1,13 @@
 import nodemailer from "nodemailer";
-import { readFile } from "fs/promises";
-import path from "path";
-
-async function uploadToImgbb(imageBuffer) {
-  const base64 = imageBuffer.toString("base64");
-  const formData = new URLSearchParams();
-  formData.append("key", process.env.IMGBB_API_KEY);
-  formData.append("image", base64);
-
-  const res = await fetch("https://api.imgbb.com/1/upload", {
-    method: "POST",
-    body: formData,
-  });
-  const json = await res.json();
-  if (!json.success) throw new Error("imgbb 업로드 실패: " + JSON.stringify(json));
-  return json.data.url;
-}
 
 export async function POST(request) {
-  const { to, filename, userName = "사용자" } = await request.json();
+  const { to, filename, url, userName = "사용자" } = await request.json();
 
-  if (!to || !filename) {
+  if (!to || (!filename && !url)) {
     return Response.json({ ok: false, message: "필수 값이 없습니다." }, { status: 400 });
   }
 
-  let imageBuffer;
-  try {
-    const filePath = path.join(process.cwd(), "public", "photocards", filename);
-    imageBuffer = await readFile(filePath);
-  } catch {
-    return Response.json({ ok: false, message: "저장된 이미지를 찾을 수 없어요." }, { status: 404 });
-  }
-
-  let imageUrl;
-  try {
-    imageUrl = await uploadToImgbb(imageBuffer);
-  } catch (err) {
-    console.error("[photocard-email] imgbb 업로드 실패:", err.message);
-    return Response.json({ ok: false, message: "이미지 업로드 실패: " + err.message }, { status: 500 });
-  }
+  const imageUrl = url || `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET_NAME}/${filename}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",

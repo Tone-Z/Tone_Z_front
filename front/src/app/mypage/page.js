@@ -9,7 +9,6 @@ function formatDate(dateStr) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-
 function toneToIcon(tone) {
   if (!tone) return "/img/basic_icon.png";
   if (tone.startsWith("spring")) return "/img/spring_icon.png";
@@ -24,11 +23,16 @@ export default function MyPage() {
   const [user, setUser] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 3;
+  const [photoPage, setPhotoPage] = useState(0);
+  const PHOTO_PAGE_SIZE = 4;
+  const [photocards, setPhotocards] = useState([]);
+  const [tab, setTab] = useState("results");
 
   useEffect(() => {
     const stored = sessionStorage.getItem("loginUser");
@@ -41,6 +45,11 @@ export default function MyPage() {
       .then((json) => { if (json.ok) setHistory(json.history); })
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    fetch(`http://localhost:8080/photocard/list?userId=${u.id}`)
+      .then((r) => r.json())
+      .then((json) => { if (json.ok) setPhotocards(json.photocards.filter(p => p.url)); })
+      .catch(() => {});
   }, [router]);
 
   const logout = () => {
@@ -50,7 +59,7 @@ export default function MyPage() {
 
   const latestTone = history[0]?.tone ?? null;
 
-  const handleSendEmail = async () => {
+  const handleSendResultEmail = async () => {
     if (!email) { setStatus("이메일을 입력해주세요."); return; }
     if (!latestTone) { setStatus("진단 결과가 없어요."); return; }
     setStatus("전송 중...");
@@ -64,7 +73,29 @@ export default function MyPage() {
       const json = await res.json();
       if (res.ok && json.ok) {
         setStatus("전송 완료!");
-        setTimeout(() => { setShowModal(false); setEmail(""); setStatus(""); }, 1500);
+        setTimeout(() => { setShowResultModal(false); setEmail(""); setStatus(""); }, 1500);
+      } else {
+        setStatus("전송 실패: " + (json.message || ""));
+      }
+    } catch {
+      setStatus("전송 실패. 다시 시도해주세요.");
+    }
+  };
+
+  const handleSendPhotoEmail = async () => {
+    if (!email) { setStatus("이메일을 입력해주세요."); return; }
+    if (!selectedPhoto) return;
+    setStatus("전송 중...");
+    try {
+      const res = await fetch("/api/photocard-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to: email, url: selectedPhoto.url, userName: user.nickname }),
+      });
+      const json = await res.json();
+      if (res.ok && json.ok) {
+        setStatus("전송 완료!");
+        setTimeout(() => { setSelectedPhoto(null); setEmail(""); setStatus(""); }, 1500);
       } else {
         setStatus("전송 실패: " + (json.message || ""));
       }
@@ -77,7 +108,8 @@ export default function MyPage() {
 
   return (
     <>
-      {showModal && (
+      {/* 결과 이메일 모달 */}
+      {showResultModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-[90%] max-w-[400px] rounded-2xl bg-white px-8 py-7 shadow-xl">
             <h3 className="mb-1 text-[18px] font-bold text-[#555]">이메일로 결과 보내기</h3>
@@ -87,19 +119,51 @@ export default function MyPage() {
               placeholder="이메일 주소를 입력하세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSendEmail()}
+              onKeyDown={(e) => e.key === "Enter" && handleSendResultEmail()}
               className="mb-3 w-full rounded-xl border border-[#eee] px-4 py-3 text-[14px] text-[#333] outline-none focus:border-[#ffb7b1]"
             />
             {status && <p className="mb-3 text-[13px] text-[#ff8b87]">{status}</p>}
             <div className="flex gap-3">
               <button
-                onClick={() => { setShowModal(false); setEmail(""); setStatus(""); }}
+                onClick={() => { setShowResultModal(false); setEmail(""); setStatus(""); }}
                 className="flex-1 rounded-xl border border-[#eee] py-3 text-[13px] text-[#999] hover:bg-[#f9f9f9]"
               >
                 취소
               </button>
               <button
-                onClick={handleSendEmail}
+                onClick={handleSendResultEmail}
+                className="flex-1 rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90"
+              >
+                보내기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 사진 클릭 모달 */}
+      {selectedPhoto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => { setSelectedPhoto(null); setEmail(""); setStatus(""); }}>
+          <div className="w-[90%] max-w-[400px] rounded-2xl bg-white px-6 py-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedPhoto.url} alt="인생네컷" className="mb-4 w-full rounded-xl" />
+            <input
+              type="email"
+              placeholder="이메일로 전송하기"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendPhotoEmail()}
+              className="mb-3 w-full rounded-xl border border-[#eee] px-4 py-3 text-[14px] text-[#333] outline-none focus:border-[#ffb7b1]"
+            />
+            {status && <p className="mb-3 text-[13px] text-[#ff8b87]">{status}</p>}
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setSelectedPhoto(null); setEmail(""); setStatus(""); }}
+                className="flex-1 rounded-xl border border-[#eee] py-3 text-[13px] text-[#999] hover:bg-[#f9f9f9]"
+              >
+                닫기
+              </button>
+              <button
+                onClick={handleSendPhotoEmail}
                 className="flex-1 rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90"
               >
                 보내기
@@ -110,7 +174,7 @@ export default function MyPage() {
       )}
 
       <main
-        className="h-screen overflow-hidden"
+        className={tab === "photos" ? "min-h-screen overflow-y-auto" : "h-screen overflow-hidden"}
         style={{ backgroundImage: "url('/img/My_Page.png')", backgroundSize: "cover", backgroundPosition: "center top" }}
       >
         {/* 헤더 */}
@@ -126,7 +190,7 @@ export default function MyPage() {
           </button>
         </div>
 
-        <div className="mx-auto max-w-[720px] px-6 pb-24">
+        <div className="mx-auto max-w-[720px] px-6 pb-48">
           {/* 프로필 */}
           <div className="mb-6 flex flex-col items-center pt-36">
             <div className="mb-3 h-[100px] w-[100px] overflow-hidden rounded-full border-4 border-white shadow-md">
@@ -140,38 +204,94 @@ export default function MyPage() {
             <p className="text-[22px] font-bold text-[#555]">{user.nickname} 님</p>
           </div>
 
-          {/* 이전 결과 */}
-          <div className="rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm">
-            <h3 className="mb-4 text-center text-[16px] font-bold text-[#555]">이전 결과</h3>
-            {loading ? (
-              <p className="text-center text-[13px] text-[#aaa]">불러오는 중...</p>
-            ) : history.length === 0 ? (
-              <p className="py-4 text-center text-[13px] text-[#aaa]">아직 진단 결과가 없어요.</p>
+          {/* 탭 버튼 */}
+          <div className="mb-4 flex justify-center">
+            <div className="flex rounded-full bg-white/80 p-1 shadow-sm backdrop-blur-sm">
+              <button
+                onClick={() => setTab("results")}
+                className={`rounded-full px-6 py-2 text-[13px] font-semibold transition ${
+                  tab === "results" ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white shadow" : "text-[#aaa]"
+                }`}
+              >
+                이전 결과
+              </button>
+              <button
+                onClick={() => setTab("photos")}
+                className={`rounded-full px-6 py-2 text-[13px] font-semibold transition ${
+                  tab === "photos" ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white shadow" : "text-[#aaa]"
+                }`}
+              >
+                내 인생네컷
+              </button>
+            </div>
+          </div>
+
+          {/* 탭 콘텐츠 */}
+          <div className="rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm min-h-[420px]">
+            {tab === "results" ? (
+              loading ? (
+                <p className="text-center text-[13px] text-[#aaa]">불러오는 중...</p>
+              ) : history.length === 0 ? (
+                <p className="py-4 text-center text-[13px] text-[#aaa]">아직 진단 결과가 없어요.</p>
+              ) : (() => {
+                  const totalPages = Math.ceil(history.length / PAGE_SIZE);
+                  const pageItems = history.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+                  return (
+                    <>
+                      <div className="space-y-3">
+                        {pageItems.map((item) => {
+                          const d = toneData[item.tone];
+                          return (
+                            <div key={item.id} onClick={() => router.push(`/result/${item.tone}`)} className="cursor-pointer rounded-xl border border-[#f5f5f5] bg-white px-5 py-4 shadow-sm hover:border-[#ffb7b1] hover:shadow-md transition">
+                              <p className="text-[12px] text-[#bbb]">{formatDate(item.created_at)}</p>
+                              <p className="text-[14px] font-semibold text-[#555]">{d?.type ?? item.tone}</p>
+                              <p className="mt-1 truncate text-[12px] text-[#888]">{d?.desc ?? ""}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {totalPages > 1 && (
+                        <div className="mt-5 flex items-center justify-center gap-2">
+                          {Array.from({ length: totalPages }).map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setPage(i)}
+                              className={`h-[8px] rounded-full transition-all duration-300 ${
+                                i === page ? "w-[28px] bg-[#ffb7b1]" : "w-[8px] bg-[#e0e0e0]"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()
+            ) : photocards.length === 0 ? (
+              <p className="py-4 text-center text-[13px] text-[#aaa]">아직 찍은 사진이 없어요.</p>
             ) : (() => {
-                const totalPages = Math.ceil(history.length / PAGE_SIZE);
-                const pageItems = history.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+                const totalPhotoPages = Math.ceil(photocards.length / PHOTO_PAGE_SIZE);
+                const pagePhotos = photocards.slice(photoPage * PHOTO_PAGE_SIZE, photoPage * PHOTO_PAGE_SIZE + PHOTO_PAGE_SIZE);
                 return (
                   <>
-                    <div className="space-y-3">
-                      {pageItems.map((item) => {
-                        const d = toneData[item.tone];
-                        return (
-                          <div key={item.id} className="rounded-xl border border-[#f5f5f5] bg-white px-5 py-4 shadow-sm">
-                            <p className="text-[12px] text-[#bbb]">{formatDate(item.created_at)}</p>
-                            <p className="text-[14px] font-semibold text-[#555]">{d?.type ?? item.tone}</p>
-                            <p className="mt-1 truncate text-[12px] text-[#888]">{d?.desc ?? ""}</p>
-                          </div>
-                        );
-                      })}
+                    <div className="grid grid-cols-2 gap-2">
+                      {pagePhotos.map((p) => (
+                        <img
+                          key={p.id}
+                          src={p.url}
+                          alt="인생네컷"
+                          className="w-full cursor-pointer rounded-xl object-cover shadow-sm hover:opacity-90 transition"
+                          onClick={() => { setSelectedPhoto(p); setEmail(""); setStatus(""); }}
+                        />
+                      ))}
                     </div>
-                    {totalPages > 1 && (
+                    {totalPhotoPages > 1 && (
                       <div className="mt-5 flex items-center justify-center gap-2">
-                        {Array.from({ length: totalPages }).map((_, i) => (
+                        {Array.from({ length: totalPhotoPages }).map((_, i) => (
                           <button
                             key={i}
-                            onClick={() => setPage(i)}
+                            onClick={() => setPhotoPage(i)}
                             className={`h-[8px] rounded-full transition-all duration-300 ${
-                              i === page ? "w-[28px] bg-[#ffb7b1]" : "w-[8px] bg-[#e0e0e0]"
+                              i === photoPage ? "w-[28px] bg-[#ffb7b1]" : "w-[8px] bg-[#e0e0e0]"
                             }`}
                           />
                         ))}
@@ -179,12 +299,12 @@ export default function MyPage() {
                     )}
                   </>
                 );
-              })()}
+              })()
+            }
           </div>
-        </div>
 
-        {/* 하단 버튼 */}
-        <div className="fixed bottom-5 left-0 right-0 flex justify-center gap-4 bg-white/80 px-6 py-4 backdrop-blur-sm">
+          {/* 하단 버튼 */}
+          <div className={`flex justify-center gap-4 px-6 py-4 ${tab === "results" ? "fixed bottom-5 left-0 right-0 bg-white/80 backdrop-blur-sm" : "mt-4"}`}>
           <button
             onClick={() => router.push("/scan")}
             className="rounded-full border-2 border-[#ffb7b1] px-8 py-3 text-[14px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
@@ -193,12 +313,13 @@ export default function MyPage() {
           </button>
           {history.length > 0 && (
             <button
-              onClick={() => setShowModal(true)}
+              onClick={() => setShowResultModal(true)}
               className="rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-8 py-3 text-[14px] font-semibold text-white shadow-md hover:opacity-90 transition"
             >
               이메일로 결과 공유하기
             </button>
           )}
+          </div>
         </div>
       </main>
 
@@ -208,7 +329,6 @@ export default function MyPage() {
       >
         <img src="/img/chatbot_icon.png" alt="챗봇" className="h-full w-full" />
       </button>
-
     </>
   );
 }

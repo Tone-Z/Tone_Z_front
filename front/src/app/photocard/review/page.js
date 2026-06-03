@@ -12,6 +12,7 @@ export default function ReviewPage() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const canvasRef = useRef(null);
+  const savedUrlRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,6 +25,19 @@ export default function ReviewPage() {
       detectFrameSlots(f.src).then(setSlots);
     }
   }, []);
+
+  const savedRef = useRef(false);
+  useEffect(() => {
+    if (slots && photos.length > 0 && !savedRef.current) {
+      savedRef.current = true;
+      setTimeout(async () => {
+        try {
+          const result = await saveImage();
+          savedUrlRef.current = result.url;
+        } catch {}
+      }, 500);
+    }
+  }, [slots, photos]);
 
   const composeImage = () =>
     new Promise((resolve) => {
@@ -89,35 +103,42 @@ export default function ReviewPage() {
       }
     });
 
+  const saveImage = async () => {
+    const imageDataUrl = await composeImage();
+    const loginUser = sessionStorage.getItem("loginUser");
+    const loginObj = loginUser ? JSON.parse(loginUser) : null;
+    const userId = loginObj?.id ?? null;
+    const saveRes = await fetch("/api/photocard-save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageDataUrl, userId }),
+    });
+    const saveJson = await saveRes.json();
+    if (!saveRes.ok || !saveJson.filename) throw new Error(saveJson.message || "저장 실패");
+    return saveJson;
+  };
+
   const handleSend = async () => {
     if (!email) { setStatus("이메일을 입력해주세요."); return; }
-    setStatus("이미지 준비 중...");
+    setStatus("전송 중...");
     try {
-      const imageDataUrl = await composeImage();
       const loginUser = sessionStorage.getItem("loginUser");
       const loginObj = loginUser ? JSON.parse(loginUser) : null;
       const userName = loginObj?.nickname ? `${loginObj.nickname}님` : "사용자";
-      const userId = loginObj?.id ?? null;
 
-      // 서버에 이미지 저장
-      setStatus("이미지 저장 중...");
-      const saveRes = await fetch("/api/photocard-save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageDataUrl, userId }),
-      });
-      const saveJson = await saveRes.json();
-      if (!saveRes.ok || !saveJson.filename) {
-        setStatus("이미지 저장 실패: " + (saveJson.message || "다시 시도해주세요."));
-        return;
+      let url = savedUrlRef.current;
+      if (!url) {
+        setStatus("이미지 저장 중...");
+        const saveJson = await saveImage();
+        url = saveJson.url;
+        savedUrlRef.current = url;
       }
 
-      // 저장된 파일로 이메일 전송
       setStatus("전송 중...");
       const res = await fetch("/api/photocard-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to: email, filename: saveJson.filename, userName }),
+        body: JSON.stringify({ to: email, url, userName }),
       });
       const json = await res.json();
       if (res.ok && json.ok) {
@@ -129,6 +150,10 @@ export default function ReviewPage() {
     } catch {
       setStatus("전송에 실패했어요. 다시 시도해주세요.");
     }
+  };
+
+  const handleGoHome = () => {
+    router.push("/");
   };
 
   return (
@@ -223,7 +248,7 @@ export default function ReviewPage() {
               이메일로 보내기
             </button>
             <button
-              onClick={() => router.push("/")}
+              onClick={handleGoHome}
               className="w-full rounded-full border-2 border-[#ffb7b1] py-4 text-[15px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
             >
               첫화면으로 돌아가기
