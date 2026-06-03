@@ -7,11 +7,32 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [btnTop, setBtnTop] = useState("48%");
+  const [bgPos, setBgPos] = useState("center 100%");
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const data = sessionStorage.getItem("loginUser");
     setUser(data ? JSON.parse(data) : null);
+  }, []);
+
+  useEffect(() => {
+    const update = () => {
+      const isFullscreen = window.innerHeight >= window.screen.height - 50;
+      if (isFullscreen) {
+        setIsFullscreen(true);
+        setBtnTop("49%");
+        setBgPos("center 45%");
+      } else {
+        setIsFullscreen(false);
+        setBtnTop("48%");
+        setBgPos("center 100%");
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   const startTest = () => {
@@ -20,9 +41,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#fff7f7]">
-      
+
       {/* 헤더 */}
-      <header className="relative z-20 flex h-[72px] w-full items-center justify-between bg-white px-6">
+      <header className={`fixed top-0 left-0 right-0 z-20 flex h-[72px] w-full justify-between bg-white px-6 ${isFullscreen ? "items-end pb-1" : "items-center"}`}>
         <Link href="/">
           <Image
             src="/img/logo.png"
@@ -62,19 +83,20 @@ export default function Home() {
 
       {/* 메인 */}
       <main
-        className="relative h-[calc(100vh-72px)] w-full bg-top bg-no-repeat"
+        className="relative h-screen w-full bg-top bg-no-repeat"
         style={{
           backgroundImage: "url('/img/main.png?v=3')",
           backgroundSize: "cover",
-          backgroundPosition: "center 100%",
+          backgroundPosition: bgPos,
         }}
       >
         {/* 버튼 위치 */}
         <button
           onClick={startTest}
-          className="absolute left-1/2 top-[46%] z-10 -translate-x-1/2 rounded-full bg-[#F7A4A8] px-10 py-4 text-[20px] text-white"
+          className="absolute left-1/2 z-10 -translate-x-1/2"
+          style={{ top: btnTop }}
         >
-          진단하기
+          <img src="/img/main_button.png" alt="진단하기" className="h-auto w-[180px]" />
         </button>
       </main>
     </div>
