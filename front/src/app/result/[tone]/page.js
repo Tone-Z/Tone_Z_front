@@ -33,11 +33,11 @@ export default function ResultPage({ params }) {
 
   return (
     <main className="min-h-screen bg-[#e9e9e9]">
-      <div className="mx-auto w-full max-w-[1691px] bg-white">
-        <ResultHeader data={data} userName={userName} />
+      <div className="w-full bg-white">
+        <ResultHeader data={data} userName={userName} tone={tone} />
         <BestColor data={data} />
         <MakeupSection data={data} />
-        <VideoSection data={data} />
+        <VideoSection data={data} tone={tone} />
         <TipSection data={data} />
         <BottomButtons data={data} tone={tone} onChatOpen={() => setChatOpen(true)} />
       </div>
@@ -46,14 +46,23 @@ export default function ResultPage({ params }) {
   );
 }
 
-function ResultHeader({ data, userName }) {
+function getSeasonLogo(tone) {
+  if (!tone) return "/img/logo.png";
+  if (tone.startsWith("spring")) return "/img/Spring_logo.png";
+  if (tone.startsWith("summer")) return "/img/Summer_logo.png";
+  if (tone.startsWith("autumn")) return "/img/Autumn_logo.png";
+  if (tone.startsWith("winter")) return "/img/Winter_logo.png";
+  return "/img/logo.png";
+}
+
+function ResultHeader({ data, userName, tone }) {
   return (
     <section className="relative w-full overflow-hidden border-0">
       <div
         className="relative flex h-[88px] w-full items-center px-[40px] border-0"
         style={{ backgroundColor: data.headerBar }}
       >
-        <a href="/"><img src="/img/logo.png" alt="Tone-Z" className="h-[42px]" /></a>
+        <a href="/"><img src={getSeasonLogo(tone)} alt="Tone-Z" className="h-[42px]" /></a>
 
         <div
           className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2 rounded-full px-[5vw] py-[1vw] text-[clamp(12px,1.2vw,20px)] font-semibold text-white"
@@ -318,7 +327,6 @@ function VideoCard({ video, isLarge, playing, onPlay }) {
         allowFullScreen
       />
       <p className="line-clamp-2 p-4 text-left text-[clamp(11px,0.9vw,14px)] text-[#777]">{video.title}</p>
-      <p className="px-4 pb-3 text-[10px] text-[#bbb]">{video.channel}</p>
     </div>
   );
 
@@ -342,7 +350,6 @@ function VideoCard({ video, isLarge, playing, onPlay }) {
       <p className={`line-clamp-2 text-left text-[#777] ${isLarge ? "p-4 text-[clamp(11px,0.9vw,14px)]" : "p-2 text-[10px]"}`}>
         {video.title}
       </p>
-      {isLarge && <p className="px-4 pb-3 text-[10px] text-[#bbb]">{video.channel}</p>}
     </div>
   );
 }
@@ -353,14 +360,23 @@ function VideoCard({ video, isLarge, playing, onPlay }) {
 //   right 슬롯: center(50%) → 87%  차이 37% of container = 84% of card
 //   off 슬롯:   container 밖 65% of container = 148% of card
 const CARD_TRANSFORM = {
-  offLeft:  { transform: "translate(-148%, -50%) scale(0.5)", opacity: 0, zIndex: 1 },
-  left:     { transform: "translate(-84%,  -50%) scale(0.5)", opacity: 1, zIndex: 5 },
+  offLeft:  { transform: "translate(-155%, -50%) scale(0.5)", opacity: 0, zIndex: 1 },
+  left:     { transform: "translate(-90%,  -50%) scale(0.5)", opacity: 1, zIndex: 5 },
   center:   { transform: "translate(0%,    -50%) scale(1)",   opacity: 1, zIndex: 10 },
-  right:    { transform: "translate(84%,   -50%) scale(0.5)", opacity: 1, zIndex: 5 },
-  offRight: { transform: "translate(148%,  -50%) scale(0.5)", opacity: 0, zIndex: 1 },
+  right:    { transform: "translate(90%,   -50%) scale(0.5)", opacity: 1, zIndex: 5 },
+  offRight: { transform: "translate(155%,  -50%) scale(0.5)", opacity: 0, zIndex: 1 },
 };
 
-function VideoSection({ data }) {
+function getSeasonPrefix(tone) {
+  if (!tone) return "Spring";
+  if (tone.startsWith("spring")) return "Spring";
+  if (tone.startsWith("summer")) return "Summer";
+  if (tone.startsWith("autumn")) return "Autumn";
+  if (tone.startsWith("winter")) return "Winter";
+  return "Spring";
+}
+
+function VideoSection({ data, tone }) {
   const [videos, setVideos] = useState([]);
   const [center, setCenter] = useState(1);
   const [playing, setPlaying] = useState(false);
@@ -449,7 +465,7 @@ function VideoSection({ data }) {
       {videos.length === 0 ? (
         <p className="text-[#999]">영상을 불러오는 중이에요...</p>
       ) : (
-        <div className="relative overflow-hidden" style={{ height: "clamp(300px, 30vw, 460px)" }}>
+        <div className="relative" style={{ height: "clamp(300px, 30vw, 460px)" }}>
           {slots.map(({ offset, pos }) => (
             <div
               key={getVideoIdx(offset)}
@@ -476,14 +492,18 @@ function VideoSection({ data }) {
           {/* 네비게이션 버튼 — 중앙 카드 양쪽 여백에 고정 */}
           <button
             onClick={() => changeVideo("prev")}
-            className="absolute z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
-            style={{ left: "calc(26% - 20px)", top: "50%" }}
-          >‹</button>
+            className="absolute z-20 -translate-y-1/2 transition hover:scale-110"
+            style={{ left: "calc(25% - 32px)", top: "50%" }}
+          >
+            <img src={`/img/${getSeasonPrefix(tone)}_left.png`} alt="prev" className="h-16 w-16" />
+          </button>
           <button
             onClick={() => changeVideo("next")}
-            className="absolute z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#ffd1d1] text-2xl font-bold text-white transition hover:scale-110"
-            style={{ left: "calc(74% - 20px)", top: "50%" }}
-          >›</button>
+            className="absolute z-20 -translate-y-1/2 transition hover:scale-110"
+            style={{ left: "calc(75% - 32px)", top: "50%" }}
+          >
+            <img src={`/img/${getSeasonPrefix(tone)}_right.png`} alt="next" className="h-16 w-16" />
+          </button>
         </div>
       )}
     </section>

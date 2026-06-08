@@ -64,19 +64,8 @@ export default function Home() {
             {user.nickname}님
           </div>
         ) : (
-          <Link
-            href="/login"
-            className="flex items-center gap-2 rounded-full border border-[#f3b7bc] px-4 py-2 text-[#f3a0a8]"
-          >
-            <Image
-              src="/img/login_icon.png"
-              alt="login"
-              width={20}
-              height={20}
-              quality={100}
-              priority
-            />
-            로그인
+          <Link href="/login">
+            <img src="/img/login_button.png" alt="로그인" className="h-auto w-[150px]" />
           </Link>
         )}
       </header>
