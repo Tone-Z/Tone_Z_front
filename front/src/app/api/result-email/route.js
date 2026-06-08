@@ -7,17 +7,20 @@ export async function POST(request) {
     return Response.json({ ok: false, message: "필수 값이 없습니다." }, { status: 400 });
   }
 
+  const accounts = [
+    { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    { user: process.env.EMAIL_USER_2, pass: process.env.EMAIL_PASS_2 },
+  ].filter((a) => a.user && a.pass);
+  const account = accounts[Math.floor(Math.random() * accounts.length)];
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+    auth: { user: account.user, pass: account.pass },
   });
 
   try {
     await transporter.sendMail({
-      from: `"Tone-Z" <${process.env.EMAIL_USER}>`,
+      from: `"Tone-Z" <${account.user}>`,
       to,
       subject: `${userName}님의 Tone-Z 퍼스널컬러 진단 결과예요!`,
       text: `${userName}님의 퍼스널컬러 진단 결과를 확인해보세요: ${resultUrl}`,

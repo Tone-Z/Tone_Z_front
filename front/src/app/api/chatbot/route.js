@@ -106,7 +106,7 @@ export async function POST(request) {
   if (userId) {
     try {
       if (!newConvId) {
-        const convRes = await fetch("http://localhost:8080/chatbot/conversation", {
+        const convRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chatbot/conversation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId, title: message.slice(0, 30) }),
@@ -115,7 +115,7 @@ export async function POST(request) {
         if (convJson.ok) newConvId = convJson.conversationId;
       }
       if (newConvId) {
-        await fetch("http://localhost:8080/chatbot/message", {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chatbot/message`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

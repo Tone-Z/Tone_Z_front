@@ -35,7 +35,7 @@ export async function POST(request) {
   const url = `${process.env.R2_PUBLIC_URL}/${filename}`;
 
   try {
-    await fetch("http://localhost:8080/photocard/save", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/photocard/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: userId ?? null, filename, url }),

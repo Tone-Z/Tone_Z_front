@@ -40,13 +40,13 @@ export default function MyPage() {
     const u = JSON.parse(stored);
     setUser(u);
 
-    fetch(`http://localhost:8080/diagnosis/history/${u.id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnosis/history/${u.id}`)
       .then((r) => r.json())
       .then((json) => { if (json.ok) setHistory(json.history); })
       .catch(() => {})
       .finally(() => setLoading(false));
 
-    fetch(`http://localhost:8080/photocard/list?userId=${u.id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/photocard/list?userId=${u.id}`)
       .then((r) => r.json())
       .then((json) => { if (json.ok) setPhotocards(json.photocards.filter(p => p.url)); })
       .catch(() => {});

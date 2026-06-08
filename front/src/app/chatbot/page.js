@@ -46,7 +46,7 @@ export default function ChatbotPage() {
       if (userTone) {
         setTone(userTone);
       } else {
-        fetch(`http://localhost:8080/diagnosis/history/${u.id}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnosis/history/${u.id}`)
           .then((r) => r.json())
           .then((json) => {
             if (json.ok && json.history.length > 0) setTone(json.history[0].tone);
@@ -72,7 +72,7 @@ export default function ChatbotPage() {
 
   const fetchConversations = async (userId) => {
     try {
-      const res = await fetch(`http://localhost:8080/chatbot/conversations/${userId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chatbot/conversations/${userId}`);
       const json = await res.json();
       if (json.ok) setConversations(json.conversations);
     } catch {}
@@ -83,7 +83,7 @@ export default function ChatbotPage() {
     setShowKeywords(false);
     setLoadingConv(true);
     try {
-      const res = await fetch(`http://localhost:8080/chatbot/conversation/${convId}/messages`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chatbot/conversation/${convId}/messages`);
       const json = await res.json();
       if (json.ok) {
         setMessages(json.messages.map((m) => ({ role: m.role, content: m.content })));

@@ -9,17 +9,20 @@ export async function POST(request) {
 
   const imageUrl = url || `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET_NAME}/${filename}`;
 
+  const accounts = [
+    { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    { user: process.env.EMAIL_USER_2, pass: process.env.EMAIL_PASS_2 },
+  ].filter((a) => a.user && a.pass);
+  const account = accounts[Math.floor(Math.random() * accounts.length)];
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+    auth: { user: account.user, pass: account.pass },
   });
 
   try {
     await transporter.sendMail({
-      from: `"Tone-Z" <${process.env.EMAIL_USER}>`,
+      from: `"Tone-Z" <${account.user}>`,
       to,
       subject: `${userName}의 Tone-Z 네컷사진이 완성됐어요!`,
       text: `${userName}만의 네컷사진이 완성됐어요! Tone-Z에서 보내드린 메일입니다.`,

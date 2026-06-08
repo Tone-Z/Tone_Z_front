@@ -16,7 +16,7 @@ export default function SignupPage() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://localhost:8080/signup", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

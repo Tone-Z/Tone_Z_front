@@ -7,18 +7,21 @@ export async function POST(request) {
     return Response.json({ ok: false, message: "이메일 주소가 없습니다." }, { status: 400 });
   }
 
+  const accounts = [
+    { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    { user: process.env.EMAIL_USER_2, pass: process.env.EMAIL_PASS_2 },
+  ].filter((a) => a.user && a.pass);
+  const account = accounts[Math.floor(Math.random() * accounts.length)];
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+    auth: { user: account.user, pass: account.pass },
   });
 
   const resultUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/result/${tone}`;
 
   await transporter.sendMail({
-    from: `"Tone-Z" <${process.env.EMAIL_USER}>`,
+    from: `"Tone-Z" <${account.user}>`,
     to,
     subject: `나의 퍼스널컬러는 ${koreanType}!`,
     html: `
