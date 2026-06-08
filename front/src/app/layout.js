@@ -14,6 +14,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Tone-Z",
   description: "퍼스널컬러 진단 서비스",
+  icons: {
+    icon: "/img/Official_img.png",
+  },
 };
 
 export default function RootLayout({ children }) {
