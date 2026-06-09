@@ -625,7 +625,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
         <img src="/img/choice.png" alt="" className="absolute inset-0 h-full w-full" />
         <button
           onClick={() => router.push("/scan")}
-          className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
+          className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <img src="/img/again.png" alt="다시 진단" className="relative h-6 w-6" />
@@ -636,7 +636,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
 
         <button
           onClick={() => setShowModal(true)}
-          className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
+          className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <img src="/img/email.png" alt="이메일" className="relative h-6 w-auto" />
@@ -645,7 +645,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
 
         <img src="/img/row.png" alt="" className="relative mx-3 h-6 w-auto flex-shrink-0" />
 
-        <a href="/photocard" className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
+        <a href="/photocard" className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <img src="/img/picture.png" alt="네컷" className="relative h-6 w-6" />
           <span className="relative">네컷사진 만들기</span>
