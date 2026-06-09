@@ -621,30 +621,34 @@ function BottomButtons({ data, tone, onChatOpen }) {
       )}
 
     <section className="relative flex justify-center px-[8%] pb-24">
-      <div className="flex w-full max-w-[850px] items-center justify-center rounded-full border border-[#ff7979] bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-5 py-4 text-white">
+      <div className="relative flex w-full max-w-[850px] items-center justify-center px-5 py-4">
+        <img src="/img/choice.png" alt="" className="absolute inset-0 h-full w-full" />
         <button
           onClick={() => router.push("/scan")}
-          className="flex flex-1 items-center justify-center gap-2 text-[clamp(10px,0.9vw,14px)] font-semibold"
+          className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
-          <img src="/img/again.png" alt="다시 진단" className="h-5 w-5" />
-          다시 진단하기
+          <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <img src="/img/again.png" alt="다시 진단" className="relative h-5 w-5" />
+          <span className="relative">다시 진단하기</span>
         </button>
 
-        <span className="mx-3 h-5 w-[1px] bg-white opacity-70" />
+        <span className="relative mx-3 h-5 w-[1px] bg-[#ff7070] opacity-50" />
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex flex-1 items-center justify-center gap-2 text-[clamp(10px,0.9vw,14px)] font-semibold"
+          className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
-          <img src="/img/email.png" alt="이메일" className="h-5 w-5 invert" />
-          이메일로 결과 공유하기
+          <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <img src="/img/email.png" alt="이메일" className="relative h-5 w-5" />
+          <span className="relative">이메일로 결과 공유하기</span>
         </button>
 
-        <span className="mx-3 h-5 w-[1px] bg-white opacity-70" />
+        <span className="relative mx-3 h-5 w-[1px] bg-[#ff7070] opacity-50" />
 
-        <a href="/photocard" className="flex flex-1 items-center justify-center gap-2 text-[clamp(10px,0.9vw,14px)] font-semibold">
-          <img src="/img/picture.png" alt="네컷" className="h-5 w-5" />
-          네컷사진
+        <a href="/photocard" className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
+          <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <img src="/img/picture.png" alt="네컷" className="relative h-5 w-5" />
+          <span className="relative">네컷사진 만들기</span>
         </a>
       </div>
 
