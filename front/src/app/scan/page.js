@@ -38,6 +38,7 @@ export default function ScanPage() {
           clearInterval(timer);
 
           setTimeout(() => {
+            sessionStorage.setItem("freshDiagnosis", "true");
             router.push("/result/spring-light");
           }, 500);
 

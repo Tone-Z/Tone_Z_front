@@ -17,11 +17,14 @@ export default function ResultPage({ params }) {
       try {
         const user = JSON.parse(stored);
         if (user.nickname) setUserName(user.nickname);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnosis/save`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id, tone }),
-        }).catch(() => {});
+        if (sessionStorage.getItem("freshDiagnosis") === "true") {
+          sessionStorage.removeItem("freshDiagnosis");
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnosis/save`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id, tone }),
+          }).catch(() => {});
+        }
       } catch {}
     }
   }, [tone]);
