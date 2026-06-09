@@ -777,7 +777,9 @@ function ChatPanel({ open, onClose, tone }) {
         body: JSON.stringify({ message: msg, history: messages, tone, userId: user?.id, userName: user?.nickname }),
       });
       const json = await res.json();
-      setMessages([...newMessages, {
+      const userContent = json.censoredMessage ?? msg;
+      const displayedMessages = [...messages, { role: "user", content: userContent }];
+      setMessages([...displayedMessages, {
         role: "assistant",
         content: json.ok ? json.reply : "오류: " + (json.message || "알 수 없는 오류"),
       }]);

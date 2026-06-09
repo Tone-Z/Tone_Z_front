@@ -21,7 +21,7 @@ export async function POST(request) {
   const crisisWords = ["자살", "ㅈㅅ", "자해", "ㅈㅎ", "죽고 싶다", "죽고싶다", "죽고싶", "죽고 싶", "죽어버리고 싶", "죽어버리고 싶다", "죽인다", "목숨", "스스로 목숨", "손목"];
   const sexualWords = ["섹스", "ㅅㅅ", "섹시", "야동", "ㅇㄷ", "야동배우", "포르노", "ㅍㄹㄴ", "성관계", "관계", "ㅅㄱㄱ", "자위", "ㅈㅇ", "성기", "ㅅㅇ", "음란", "AV", "av"];
   const bannedWords = [
-    "씨발", "시발", "씨발년", "시발년", "년", "Tlqkf", "tlqkf", "ㅅㅂ", "개새끼", "개새", "ㄱㅅㄲ", "병신", "ㅂㅅ", "지랄", "ㅈㄹ", "좆", "ㅈ같",
+    "새끼", "새끼야", "씨발", "시발", "씨발년", "시발년", "년", "Tlqkf", "tlqkf", "ㅅㅂ", "개새끼", "개새", "ㄱㅅㄲ", "병신", "ㅂㅅ", "지랄", "ㅈㄹ", "좆", "ㅈ같",
     "미친놈", "미친년", "ㅁㅊㄴ", "애미", "애비", "느금마", "쌍놈", "쌍년", "꺼져", "닥쳐",
   ];
 
@@ -37,9 +37,11 @@ export async function POST(request) {
     let reply;
     if (crisisWords.some((word) => message.includes(word))) {
       reply = "많이 힘드신가요? 💙 혼자 감당하지 않으셔도 돼요.\n자살예방상담전화 ☎ 1393 (24시간) 에 전화하시면 전문가가 도와드릴 수 있어요.";
-    } else if (sexualWords.some((word) => message.includes(word))) {
+    } 
+    else if (sexualWords.some((word) => message.includes(word))) {
       reply = "해당 내용은 답변드리기 어려워요 🚫 퍼스널컬러나 뷰티 관련 질문을 해주세요 😊";
-    } else {
+    } 
+    else {
       reply = "욕설이나 비속어는 사용할 수 없어요 🚫 퍼스널컬러나 뷰티에 관해 편하게 질문해 주세요 😊";
     }
 
@@ -112,7 +114,9 @@ export async function POST(request) {
           body: JSON.stringify({ userId, title: message.slice(0, 30) }),
         });
         const convJson = await convRes.json();
-        if (convJson.ok) newConvId = convJson.conversationId;
+        if (convJson.ok) {
+          newConvId = convJson.conversationId;
+        }
       }
       if (newConvId) {
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chatbot/message`, {
