@@ -33,6 +33,11 @@ export async function POST(request) {
               ${userName}만의 네컷사진이 완성됐어요! 🎞️
             </p>
             <img src="${imageUrl}" style="width: 100%; border-radius: 12px; display: block;" alt="네컷사진" />
+            <div style="text-align: center; margin-top: 24px;">
+              <a href="${imageUrl}" download style="display: inline-block; background: linear-gradient(to right, #ffb7b1, #ff7070); color: white; padding: 14px 32px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 15px;">
+                사진 다운로드
+              </a>
+            </div>
             <p style="color: #bbb; font-size: 12px; margin-top: 24px;">Tone-Z에서 보내드린 메일입니다.</p>
           </div>
         `,
