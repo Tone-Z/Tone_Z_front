@@ -628,7 +628,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
           className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <img src="/img/again.png" alt="다시 진단" className="relative h-5 w-5" />
+          <img src="/img/again.png" alt="다시 진단" className="relative h-6 w-6" />
           <span className="relative">다시 진단하기</span>
         </button>
 
@@ -639,7 +639,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
           className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
         >
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <img src="/img/email.png" alt="이메일" className="relative h-14 w-14" />
+          <img src="/img/email.png" alt="이메일" className="relative h-6 w-6" />
           <span className="relative">이메일로 결과 공유하기</span>
         </button>
 
@@ -647,7 +647,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
 
         <a href="/photocard" className="group relative flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <img src="/img/picture.png" alt="네컷" className="relative h-5 w-5" />
+          <img src="/img/picture.png" alt="네컷" className="relative h-6 w-6" />
           <span className="relative">네컷사진 만들기</span>
         </a>
       </div>
