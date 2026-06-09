@@ -492,14 +492,14 @@ function VideoSection({ data, tone }) {
           {/* 네비게이션 버튼 — 중앙 카드 양쪽 여백에 고정 */}
           <button
             onClick={() => changeVideo("prev")}
-            className="absolute z-20 -translate-y-1/2 transition hover:scale-110"
+            className="absolute z-20 -translate-y-1/2 transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
             style={{ left: "calc(25% - 32px)", top: "50%" }}
           >
             <img src={`/img/${getSeasonPrefix(tone)}_left.png`} alt="prev" className="h-16 w-16" />
           </button>
           <button
             onClick={() => changeVideo("next")}
-            className="absolute z-20 -translate-y-1/2 transition hover:scale-110"
+            className="absolute z-20 -translate-y-1/2 transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
             style={{ left: "calc(75% - 32px)", top: "50%" }}
           >
             <img src={`/img/${getSeasonPrefix(tone)}_right.png`} alt="next" className="h-16 w-16" />
@@ -618,7 +618,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
       )}
 
     <section className="relative flex justify-center px-[8%] pb-24">
-      <div className="flex w-full max-w-[850px] items-center justify-center rounded-full border border-[#ff7979] bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-5 py-4 text-white">
+      <div className="flex w-full max-w-[850px] items-center justify-center rounded-full border border-[#ff7979] bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-5 py-4 text-white transition-all duration-500 hover:shadow-[0_6px_24px_rgba(255,112,112,0.45)]">
         <button
           onClick={() => router.push("/scan")}
           className="flex flex-1 items-center justify-center gap-2 text-[clamp(10px,0.9vw,14px)] font-semibold"
@@ -647,7 +647,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
 
       <button
         onClick={onChatOpen}
-        className="fixed bottom-8 right-8 h-[80px] w-[80px]"
+        className="fixed bottom-8 right-8 h-[80px] w-[80px] transition-all duration-500 hover:drop-shadow-[0_0_20px_rgba(255,112,112,0.6)] hover:scale-105"
       >
         <img src="/img/chatbot_icon.png" alt="챗봇" className="h-full w-full" />
       </button>
@@ -849,7 +849,7 @@ function ChatPanel({ open, onClose, tone }) {
             <button
               key={i}
               onClick={() => sendMessage(kw)}
-              className="rounded-full border border-[#f0e0e0] bg-white px-3 py-1.5 text-[12px] text-[#666] hover:bg-[#fff0f0] hover:border-[#ffb7b1] transition"
+              className="rounded-full border border-[#f0e0e0] bg-white px-3 py-1.5 text-[12px] text-[#666] transition-all duration-500 hover:bg-[#fff0f0] hover:border-[#ffb7b1] hover:shadow-[0_2px_10px_rgba(255,112,112,0.25)]"
             >
               {kw}
             </button>
