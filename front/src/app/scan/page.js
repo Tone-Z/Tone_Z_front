@@ -38,8 +38,7 @@ export default function ScanPage() {
           clearInterval(timer);
 
           setTimeout(() => {
-            sessionStorage.setItem("freshDiagnosis", "true");
-            router.push("/result/spring-light");
+            captureAndDiagnose();
           }, 500);
 
           return 100;
@@ -84,7 +83,44 @@ export default function ScanPage() {
       setError("카메라를 사용할 수 없어요. 권한을 허용해주세요.");
     }
   };
+  const captureAndDiagnose = async () => {
+    if (!videoRef.current) return;
 
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        setError("이미지 캡처에 실패했어요.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", blob, "capture.jpg");
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/diagnosis", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        sessionStorage.setItem("diagnosisResult", JSON.stringify(data));
+        sessionStorage.setItem("freshDiagnosis", "true");
+
+        router.push(`/result/${data.season}`);
+      } catch (e) {
+        setError("진단 서버와 연결할 수 없어요.");
+      }
+    }, "image/jpeg");
+  };
   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
