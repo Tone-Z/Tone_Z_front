@@ -105,7 +105,7 @@ export default function ScanPage() {
       formData.append("file", blob, "capture.jpg");
 
       try {
-        const res = await fetch("http://127.0.0.1:8000/diagnosis", {
+        const res = await fetch("/api/ai/diagnosis", {
           method: "POST",
           body: formData,
         });
