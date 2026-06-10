@@ -536,7 +536,7 @@ export const toneData = {
     type: "Winter bright",
     koreanType: "겨울 쿨 브라이트",
     headerImg: "/img/winter_header.png",
-    headerBar: "#C8BAFF",
+    headerBar: "#C6B8FF",
     badgeColor: "#BCABFF",
     tipBg: "#F5F0FF",
     tipBorder: "#C8B8F0",
