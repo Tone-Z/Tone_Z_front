@@ -114,7 +114,7 @@ export default function CameraPage() {
           </a>
           <span className="text-[13px] text-[#bbb]">{photos.length} / {MAX}장</span>
         </div>
-        <div className="mx-auto w-full max-w-[480px] flex-1 overflow-hidden px-4 pt-12 pb-6">
+        <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col justify-center overflow-hidden px-4 py-4">
 
         <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
           <img

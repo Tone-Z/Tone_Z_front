@@ -203,7 +203,7 @@ export default function ReviewPage() {
               다시 찍기
             </button>
           </div>
-          <div className="mx-auto w-full max-w-[480px] flex-1 overflow-hidden px-4 pt-12 pb-6">
+          <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col justify-center overflow-hidden px-4 py-4">
           {/* 완성된 프레임 */}
           <div className="relative mb-8 w-full overflow-hidden rounded-2xl shadow-lg">
             <img
