@@ -50,12 +50,12 @@ export default function PhotoCardPage() {
       </div>
 
       <div className="mx-auto max-w-[1200px] px-6 pt-130 pb-24">
-        <div className="flex flex-wrap justify-center gap-6">
-          {frames.map((frame) => (
+        <div className="grid grid-cols-12 gap-6">
+          {frames.map((frame, idx) => (
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
-              className={`w-[300px] cursor-pointer transition-all duration-200 ${
+              className={`${idx < 3 ? "col-span-4" : "col-span-3"} cursor-pointer transition-all duration-200 ${
                 selected === frame.id
                   ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
                   : "hover:scale-[1.02]"
