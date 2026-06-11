@@ -55,13 +55,16 @@ export default function PhotoCardPage() {
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
-              className={`cursor-pointer overflow-hidden rounded-2xl border-2 bg-white shadow-sm transition-all duration-200 ${
+              className={`cursor-pointer transition-all duration-200 ${
                 selected === frame.id
-                  ? "border-[#ff8b87] shadow-md scale-[1.03]"
-                  : "border-transparent hover:border-[#ffd1d1]"
+                  ? "scale-[1.05] drop-shadow-[0_0_8px_rgba(255,139,135,0.7)]"
+                  : "hover:scale-[1.02]"
               }`}
             >
-              <img src={frame.src} alt={frame.name} className="w-full object-contain" />
+              <div className="relative w-full">
+                <img src="/img/white_page.png" alt="" className="w-full" />
+                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-2" />
+              </div>
             </div>
           ))}
         </div>
@@ -70,13 +73,16 @@ export default function PhotoCardPage() {
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
-              className={`cursor-pointer overflow-hidden rounded-2xl border-2 bg-white shadow-sm transition-all duration-200 ${
+              className={`cursor-pointer transition-all duration-200 ${
                 selected === frame.id
-                  ? "border-[#ff8b87] shadow-md scale-[1.03]"
-                  : "border-transparent hover:border-[#ffd1d1]"
+                  ? "scale-[1.05] drop-shadow-[0_0_8px_rgba(255,139,135,0.7)]"
+                  : "hover:scale-[1.02]"
               }`}
             >
-              <img src={frame.src} alt={frame.name} className="w-full object-contain" />
+              <div className="relative w-full">
+                <img src="/img/white_page.png" alt="" className="w-full" />
+                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-2" />
+              </div>
             </div>
           ))}
         </div>
