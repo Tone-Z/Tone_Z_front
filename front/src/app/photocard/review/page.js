@@ -190,8 +190,9 @@ export default function ReviewPage() {
         </div>
       )}
 
-      <main className="min-h-screen bg-[#fff5f5]">
-        <div className="mx-auto max-w-[480px] px-4 pt-6 pb-20">
+      <main className="relative min-h-screen bg-[#fff5f5]">
+        <img src="/img/Photo_Background.png" alt="" className="pointer-events-none fixed inset-0 h-full w-full object-cover" />
+        <div className="relative z-10 mx-auto max-w-[480px] px-4 pt-6 pb-20">
           <div className="mb-6 flex items-center justify-between">
             <a href="/photocard">
               <img src="/img/logo.png" alt="Tone-Z" className="h-[36px]" />
