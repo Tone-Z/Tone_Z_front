@@ -191,17 +191,17 @@ export default function ReviewPage() {
       )}
 
       <main className="relative min-h-screen bg-[#fff5f5]">
-        <img src="/img/Photo_Background.png" alt="" className="pointer-events-none fixed inset-0 h-full w-full object-cover" />
-        <div className="relative z-10 mx-auto max-w-[480px] px-4 pt-6 pb-20">
+        <img src="/img/Photo_Background.png" alt="" className="pointer-events-none fixed inset-0 h-full w-full" style={{ objectFit: "fill" }} />
+        <div className="relative z-10 mx-auto max-w-[480px] px-4 pt-12 pb-20">
           <div className="mb-6 flex items-center justify-between">
             <a href="/photocard">
               <img src="/img/logo.png" alt="Tone-Z" className="h-[36px]" />
             </a>
             <button
               onClick={() => router.push("/photocard/camera")}
-              className="text-[13px] text-[#bbb] hover:text-[#ff8b87] transition"
+              className="text-[13px] text-[#ffb7b1] hover:text-[#ff7070] transition"
             >
-              ← 다시 찍기
+              다시 찍기
             </button>
           </div>
 
