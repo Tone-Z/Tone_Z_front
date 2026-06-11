@@ -49,47 +49,29 @@ export default function PhotoCardPage() {
         </a>
       </div>
 
-      <div className="mx-auto max-w-[1100px] px-6 pt-130 pb-24">
-        <div className="grid grid-cols-3 gap-6">
-          {frames.slice(0, 3).map((frame) => (
+      <div className="mx-auto max-w-[1200px] px-6 pt-130 pb-24">
+        <div className="flex flex-wrap justify-center gap-6">
+          {frames.map((frame) => (
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
-              className={`cursor-pointer transition-all duration-200 ${
+              className={`w-[220px] cursor-pointer transition-all duration-200 ${
                 selected === frame.id
-                  ? "scale-[1.05] drop-shadow-[0_0_8px_rgba(255,139,135,0.7)]"
+                  ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
                   : "hover:scale-[1.02]"
               }`}
             >
               <div className="relative w-full">
                 <img src="/img/white_page.png" alt="" className="w-full" />
-                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-2" />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 grid grid-cols-4 gap-6">
-          {frames.slice(3).map((frame) => (
-            <div
-              key={frame.id}
-              onClick={() => setSelected(frame.id)}
-              className={`cursor-pointer transition-all duration-200 ${
-                selected === frame.id
-                  ? "scale-[1.05] drop-shadow-[0_0_8px_rgba(255,139,135,0.7)]"
-                  : "hover:scale-[1.02]"
-              }`}
-            >
-              <div className="relative w-full">
-                <img src="/img/white_page.png" alt="" className="w-full" />
-                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-2" />
+                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-3" />
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <button onClick={handleStart} className="transition hover:opacity-90">
-            <img src="/img/photo_button.png" alt="네컷사진 찍으러 가기" className="h-auto w-[280px]" />
+            <img src="/img/photo_button.png" alt="네컷사진 찍으러 가기" className="h-auto w-[180px]" />
           </button>
         </div>
       </div>
