@@ -106,15 +106,16 @@ export default function CameraPage() {
       : { inset: 0 };
 
   return (
-    <main className="relative min-h-screen bg-[#fff5f5]">
-      <img src="/img/Photo_Background.png" alt="" className="pointer-events-none fixed inset-0 h-full w-full object-cover" />
-      <div className="relative z-10 mx-auto max-w-[480px] px-4 pt-6 pb-16">
-        <div className="mb-4 flex items-center justify-between">
+    <main className="relative h-screen overflow-hidden bg-[#fff5f5]">
+      <img src="/img/Photo_Background.png" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="flex items-center justify-between px-8 py-4">
           <a href="/photocard">
             <img src="/img/logo.png" alt="Tone-Z" className="h-[36px]" />
           </a>
           <span className="text-[13px] text-[#bbb]">{photos.length} / {MAX}장</span>
         </div>
+        <div className="mx-auto w-full max-w-[480px] flex-1 overflow-y-auto px-4 pb-6">
 
         <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
           <img
@@ -172,6 +173,7 @@ export default function CameraPage() {
         </div>
 
         <canvas ref={canvasRef} className="hidden" />
+        </div>
       </div>
     </main>
   );
