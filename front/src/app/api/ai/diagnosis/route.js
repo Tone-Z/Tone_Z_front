@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   const formData = await request.formData();
 
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const backendUrl = "http://127.0.0.1:8000";
 
   try {
     const res = await fetch(`${backendUrl}/diagnosis`, {
