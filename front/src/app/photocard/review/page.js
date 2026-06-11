@@ -190,12 +190,11 @@ export default function ReviewPage() {
         </div>
       )}
 
-      <main className="relative h-screen overflow-hidden bg-[#fff5f5]">
-        <img src="/img/Photo_Background.png" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+      <main className="relative h-screen overflow-hidden" style={{ backgroundImage: "url('/img/Photo_Background.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" }}>
         <div className="relative z-10 flex h-full flex-col">
           <div className="flex items-center justify-between px-8 py-4">
             <a href="/photocard">
-              <img src="/img/logo.png" alt="Tone-Z" className="h-[36px]" />
+              <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
             </a>
             <button
               onClick={() => router.push("/photocard/camera")}
