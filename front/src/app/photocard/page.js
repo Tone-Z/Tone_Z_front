@@ -51,7 +51,7 @@ export default function PhotoCardPage() {
 
       <div className="mx-auto max-w-[1100px] px-6 pt-130 pb-24">
         <div className="grid grid-cols-3 gap-6">
-          {frames.map((frame) => (
+          {frames.slice(0, 3).map((frame) => (
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
@@ -61,21 +61,29 @@ export default function PhotoCardPage() {
                   : "border-transparent hover:border-[#ffd1d1]"
               }`}
             >
-              <img
-                src={frame.src}
-                alt={frame.name}
-                className="w-full object-contain"
-              />
+              <img src={frame.src} alt={frame.name} className="w-full object-contain" />
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 grid grid-cols-4 gap-6">
+          {frames.slice(3).map((frame) => (
+            <div
+              key={frame.id}
+              onClick={() => setSelected(frame.id)}
+              className={`cursor-pointer overflow-hidden rounded-2xl border-2 bg-white shadow-sm transition-all duration-200 ${
+                selected === frame.id
+                  ? "border-[#ff8b87] shadow-md scale-[1.03]"
+                  : "border-transparent hover:border-[#ffd1d1]"
+              }`}
+            >
+              <img src={frame.src} alt={frame.name} className="w-full object-contain" />
             </div>
           ))}
         </div>
 
         <div className="mt-12 flex justify-center">
-          <button
-            onClick={handleStart}
-            className="rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-10 py-4 text-[15px] font-bold text-white shadow-md transition hover:opacity-90"
-          >
-            📷 네컷사진 찍으러 가기
+          <button onClick={handleStart} className="transition hover:opacity-90">
+            <img src="/img/photo_button.png" alt="네컷사진 찍으러 가기" className="h-auto w-[280px]" />
           </button>
         </div>
       </div>
