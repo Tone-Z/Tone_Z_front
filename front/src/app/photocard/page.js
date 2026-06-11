@@ -50,23 +50,43 @@ export default function PhotoCardPage() {
       </div>
 
       <div className="mx-auto max-w-[1200px] px-6 pt-130 pb-24">
-        <div className="grid grid-cols-12 gap-6">
-          {frames.map((frame, idx) => (
-            <div
-              key={frame.id}
-              onClick={() => setSelected(frame.id)}
-              className={`${idx < 3 ? "col-span-4" : "col-span-3"} cursor-pointer transition-all duration-200 ${
-                selected === frame.id
-                  ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
-                  : "hover:scale-[1.02]"
-              }`}
-            >
-              <div className="relative w-full">
-                <img src="/img/white_page.png" alt="" className="w-full" />
-                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-center gap-6">
+            {frames.slice(0, 3).map((frame) => (
+              <div
+                key={frame.id}
+                onClick={() => setSelected(frame.id)}
+                className={`w-[240px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
+                  selected === frame.id
+                    ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
+                    : "hover:scale-[1.02]"
+                }`}
+              >
+                <div className="relative w-full">
+                  <img src="/img/white_page.png" alt="" className="w-full" />
+                  <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="flex justify-center gap-6">
+            {frames.slice(3).map((frame) => (
+              <div
+                key={frame.id}
+                onClick={() => setSelected(frame.id)}
+                className={`w-[240px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
+                  selected === frame.id
+                    ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
+                    : "hover:scale-[1.02]"
+                }`}
+              >
+                <div className="relative w-full">
+                  <img src="/img/white_page.png" alt="" className="w-full" />
+                  <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-10 flex justify-center">
