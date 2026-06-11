@@ -45,7 +45,7 @@ export default function PhotoCardPage() {
     >
       <div className="flex flex-col items-start px-8 pt-8 pb-8">
         <a href="/">
-          <img src="/img/logo.png" alt="Tone-Z" className="h-[40px]" />
+          <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
         </a>
       </div>
 
