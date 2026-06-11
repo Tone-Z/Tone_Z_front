@@ -106,7 +106,7 @@ export default function CameraPage() {
       : { inset: 0 };
 
   return (
-    <main className="relative h-screen overflow-hidden" style={{ backgroundImage: "url('/img/Photo_Background.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" }}>
+    <main className="relative h-screen overflow-hidden" style={{ backgroundImage: "url('/img/Photo_Background.png')", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex items-center justify-between px-8 py-4">
           <a href="/photocard">
@@ -114,7 +114,7 @@ export default function CameraPage() {
           </a>
           <span className="text-[13px] text-[#bbb]">{photos.length} / {MAX}장</span>
         </div>
-        <div className="mx-auto w-full max-w-[480px] flex-1 overflow-y-auto px-4 pb-6">
+        <div className="mx-auto w-full max-w-[480px] flex-1 overflow-hidden px-4 pb-6">
 
         <div className="relative w-full overflow-hidden rounded-2xl shadow-lg">
           <img
