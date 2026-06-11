@@ -55,7 +55,7 @@ export default function PhotoCardPage() {
             <div
               key={frame.id}
               onClick={() => setSelected(frame.id)}
-              className={`w-[220px] cursor-pointer transition-all duration-200 ${
+              className={`w-[300px] cursor-pointer transition-all duration-200 ${
                 selected === frame.id
                   ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
                   : "hover:scale-[1.02]"
@@ -63,7 +63,7 @@ export default function PhotoCardPage() {
             >
               <div className="relative w-full">
                 <img src="/img/white_page.png" alt="" className="w-full" />
-                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-3" />
+                <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
               </div>
             </div>
           ))}
