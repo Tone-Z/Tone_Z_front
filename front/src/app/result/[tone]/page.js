@@ -272,19 +272,8 @@ function MakeupSection({ data }) {
                   )}
 
                   <div>
-                    <div className="mb-1 flex flex-wrap items-center gap-2">
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-[#ffd1d1] px-3 py-1 text-[10px] text-white"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
                     {item.brand && (
-                      <p className="text-[11px] text-[#bbb] mb-1">
+                      <p className="text-[11px] mb-1 font-medium" style={{ color: data.badgeColor }}>
                         {item.brand}
                       </p>
                     )}
