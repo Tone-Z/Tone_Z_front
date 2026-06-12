@@ -77,7 +77,7 @@ function ResultHeader({ data, userName, tone }) {
         <a href="/"><img src={getSeasonLogo(tone)} alt="Tone-Z" className="h-[42px]" /></a>
 
         <div className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2">
-          <img src={getSeasonResultImg(tone)} alt="퍼스널컬러 진단 결과" className="h-auto w-[clamp(180px,18vw,280px)]" />
+          <img src={getSeasonResultImg(tone)} alt="퍼스널컬러 진단 결과" className="h-auto w-[clamp(260px,26vw,400px)]" />
         </div>
       </div>
 
