@@ -58,6 +58,15 @@ function getSeasonLogo(tone) {
   return "/img/logo.png";
 }
 
+function getSeasonResultImg(tone) {
+  if (!tone) return "/img/spring_result.png";
+  if (tone.startsWith("spring")) return "/img/spring_result.png";
+  if (tone.startsWith("summer")) return "/img/summer_result.png";
+  if (tone.startsWith("autumn")) return "/img/autumn_result.png";
+  if (tone.startsWith("winter")) return "/img/winter_result.png";
+  return "/img/spring_result.png";
+}
+
 function ResultHeader({ data, userName, tone }) {
   return (
     <section className="relative w-full overflow-hidden border-0">
@@ -67,11 +76,8 @@ function ResultHeader({ data, userName, tone }) {
       >
         <a href="/"><img src={getSeasonLogo(tone)} alt="Tone-Z" className="h-[42px]" /></a>
 
-        <div
-          className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2 rounded-full px-[5vw] py-[1vw] text-[clamp(12px,1.2vw,20px)] font-semibold text-white"
-          style={{ backgroundColor: data.badgeColor }}
-        >
-          {data.badge}
+        <div className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2">
+          <img src={getSeasonResultImg(tone)} alt="퍼스널컬러 진단 결과" className="h-auto w-[clamp(180px,18vw,280px)]" />
         </div>
       </div>
 
