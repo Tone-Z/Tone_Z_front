@@ -182,7 +182,7 @@ export default function MyPage() {
       )}
 
       <main
-        className={tab === "photos" ? "min-h-screen overflow-y-auto" : "h-screen overflow-hidden"}
+        className="min-h-screen overflow-y-auto"
         style={{ backgroundImage: "url('/img/My_Page.png')", backgroundSize: "cover", backgroundPosition: "center top" }}
       >
         {/* 헤더 */}
@@ -312,30 +312,21 @@ export default function MyPage() {
           </div>
 
           {/* 하단 버튼 */}
-          <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex justify-center px-5">
-            <div className="relative flex items-center justify-center px-5" style={{ backgroundImage: "url('/img/choice.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat", minHeight: "72px", minWidth: "500px" }}>
+          <div className="mt-8 flex justify-center gap-4 pb-16">
+            <button
+              onClick={() => router.push("/scan")}
+              className="rounded-full border-2 border-[#ffb7b1] px-10 py-3.5 text-[16px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
+            >
+              {history.length > 0 ? "다시 진단하기" : "진단하기"}
+            </button>
+            {history.length > 0 && (
               <button
-                onClick={() => router.push("/scan")}
-                className="group relative flex flex-1 items-center justify-center gap-3 rounded-full py-4 text-[15px] font-semibold text-[#ff7070]"
+                onClick={() => setShowResultModal(true)}
+                className="rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-10 py-3.5 text-[16px] font-semibold text-white shadow-md hover:opacity-90 transition"
               >
-                <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <img src="/img/again.png" alt="" className="relative h-6 w-6" />
-                <span className="relative">{history.length > 0 ? "다시 진단하기" : "진단하기"}</span>
+                이메일로 결과 공유하기
               </button>
-              {history.length > 0 && (
-                <>
-                  <img src="/img/row.png" alt="" className="relative mx-3 h-6 w-auto flex-shrink-0" />
-                  <button
-                    onClick={() => setShowResultModal(true)}
-                    className="group relative flex flex-1 items-center justify-center gap-3 rounded-full py-4 text-[15px] font-semibold text-[#ff7070]"
-                  >
-                    <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                    <img src="/img/email.png" alt="" className="relative h-6 w-auto" />
-                    <span className="relative">이메일로 결과 공유하기</span>
-                  </button>
-                </>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </main>
