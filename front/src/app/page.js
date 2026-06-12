@@ -7,9 +7,8 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [btnTop, setBtnTop] = useState("48%");
+  const [btnTop, setBtnTop] = useState("54%");
   const [bgPos, setBgPos] = useState("center 100%");
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,16 +18,9 @@ export default function Home() {
 
   useEffect(() => {
     const update = () => {
-      const isFullscreen = window.innerHeight >= window.screen.height - 50;
-      if (isFullscreen) {
-        setIsFullscreen(true);
-        setBtnTop("49%");
-        setBgPos("center 45%");
-      } else {
-        setIsFullscreen(false);
-        setBtnTop("48%");
-        setBgPos("center 100%");
-      }
+      const fs = window.innerHeight >= window.screen.height - 50;
+      setBtnTop(fs ? "55%" : "54%");
+      setBgPos(fs ? "center 45%" : "center 100%");
     };
     update();
     window.addEventListener("resize", update);
@@ -43,16 +35,16 @@ export default function Home() {
     <div className="min-h-screen bg-[#fff7f7]">
 
       {/* 헤더 */}
-      <header className={`fixed top-0 left-0 right-0 z-20 flex w-full justify-between bg-white px-6 ${isFullscreen ? "h-[90px] items-end pb-4" : "h-[72px] items-center"}`}>
+      <header className="fixed top-0 left-0 right-0 z-20 flex h-[72px] w-full items-center justify-between bg-white px-6">
         <Link href="/">
           <Image
             src="/img/logo.png"
             alt="logo"
-            width={110}
-            height={40}
+            width={140}
+            height={50}
             quality={100}
             priority
-            className="w-[110px]"
+            className="w-[140px]"
             style={{ height: "auto" }}
           />
         </Link>
@@ -60,13 +52,13 @@ export default function Home() {
         {user ? (
           <div
             onClick={() => router.push("/mypage")}
-            className="cursor-pointer rounded-full border border-[#f3b7bc] px-4 py-2 text-[#f3a0a8]"
+            className="cursor-pointer rounded-full border border-[#f3b7bc] px-5 py-2 text-[15px] text-[#f3a0a8]"
           >
             {user.nickname}님
           </div>
         ) : (
           <Link href="/login">
-            <img src="/img/login_button.png" alt="로그인" className="h-auto w-[150px]" />
+            <img src="/img/login_button.png" alt="로그인" className="h-auto w-[180px]" />
           </Link>
         )}
       </header>

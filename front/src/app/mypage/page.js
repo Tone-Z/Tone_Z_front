@@ -33,6 +33,14 @@ export default function MyPage() {
   const PHOTO_PAGE_SIZE = 4;
   const [photocards, setPhotocards] = useState([]);
   const [tab, setTab] = useState("results");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsFullscreen(window.innerHeight >= window.screen.height - 50);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("loginUser");
@@ -180,11 +188,11 @@ export default function MyPage() {
         {/* 헤더 */}
         <div className="flex items-center justify-between px-8 pt-6">
           <a href="/">
-            <img src="/img/logo.png" alt="Tone-Z" className="h-[36px]" />
+            <img src="/img/logo.png" alt="Tone-Z" className="h-[42px]" />
           </a>
           <button
             onClick={logout}
-            className="rounded-full border border-[#ffb7b1] bg-white/70 px-5 py-2 text-[13px] text-[#ff8b87] backdrop-blur-sm hover:bg-white transition"
+            className="rounded-full border border-[#ffb7b1] bg-white/70 px-6 py-2.5 text-[15px] text-[#ff8b87] backdrop-blur-sm hover:bg-white transition"
           >
             로그아웃
           </button>
@@ -227,7 +235,7 @@ export default function MyPage() {
           </div>
 
           {/* 탭 콘텐츠 */}
-          <div className="rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm min-h-[420px]">
+          <div className={`rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm ${isFullscreen ? "min-h-[540px]" : "min-h-[420px]"}`}>
             {tab === "results" ? (
               loading ? (
                 <p className="text-center text-[13px] text-[#aaa]">불러오는 중...</p>
@@ -244,7 +252,7 @@ export default function MyPage() {
                           return (
                             <div key={item.id} onClick={() => router.push(`/result/${item.tone}`)} className="cursor-pointer rounded-xl border border-[#f5f5f5] bg-white px-5 py-4 shadow-sm hover:border-[#ffb7b1] hover:shadow-md transition">
                               <p className="text-[12px] text-[#bbb]">{formatDate(item.created_at)}</p>
-                              <p className="text-[14px] font-semibold text-[#555]">{d?.type ?? item.tone}</p>
+                              <p className="text-[14px] font-semibold text-[#555]">{d?.type ?? item.tone ?? "알 수 없음"}</p>
                               <p className="mt-1 truncate text-[12px] text-[#888]">{d?.desc ?? ""}</p>
                             </div>
                           );
@@ -304,7 +312,7 @@ export default function MyPage() {
           </div>
 
           {/* 하단 버튼 */}
-          <div className={`flex justify-center gap-4 px-6 py-4 ${tab === "results" ? "fixed bottom-5 left-0 right-0 bg-white/80 backdrop-blur-sm" : "mt-4"}`}>
+          <div className="fixed bottom-5 left-0 right-0 flex justify-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm">
           <button
             onClick={() => router.push("/scan")}
             className="rounded-full border-2 border-[#ffb7b1] px-8 py-3 text-[14px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
