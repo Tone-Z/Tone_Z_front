@@ -43,10 +43,19 @@ export default function PhotoCardPage() {
       className="min-h-screen"
       style={{ backgroundImage: "url('/img/Photo_Page.png')", backgroundSize: "cover", backgroundPosition: "center top" }}
     >
-      <div className="flex flex-col items-start px-8 pt-8 pb-8">
+      <div className="flex items-center justify-between px-8 pt-8 pb-8">
         <a href="/">
           <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
         </a>
+        <button
+          className="transition hover:opacity-80"
+          onClick={() => {
+            const stored = sessionStorage.getItem("loginUser");
+            window.location.href = stored ? "/mypage" : "/login?redirect=/mypage";
+          }}
+        >
+          <img src="/img/MyPage_button.png" alt="My Page" className="h-auto w-[clamp(100px,10vw,160px)]" />
+        </button>
       </div>
 
       <div className="mx-auto max-w-[1200px] px-6 pt-130 pb-24">
