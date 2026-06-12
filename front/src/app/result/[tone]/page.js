@@ -238,11 +238,11 @@ function MakeupSection({ data }) {
   return (
     <section className="overflow-hidden px-[8%] py-[4%]">
       <h2 className="mb-8 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
-        추천 메이크업 아이템
+        추천 메이크업 제품
       </h2>
 
       {products.length === 0 ? (
-        <p className="text-[#999]">추천 화장품을 불러오는 중이에요...</p>
+        <p className="text-[#999]">추천 제품을 불러오는 중이에요...</p>
       ) : (
         <div key={page} className="space-y-5 animate-makeupFlow">
           {[0, 1, 2].map((row) => (
@@ -469,7 +469,7 @@ function VideoSection({ data, tone }) {
   return (
     <section className="px-[8%] py-[7%] text-center">
       <h2 className="mb-10 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
-        {data.koreanType} 메이크업 가이드
+        {data.koreanType} 메이크업 추천 영상
       </h2>
       {videos.length === 0 ? (
         <p className="text-[#999]">영상을 불러오는 중이에요...</p>
