@@ -188,11 +188,11 @@ export default function MyPage() {
         {/* 헤더 */}
         <div className="flex items-center justify-between px-8 pt-6">
           <a href="/">
-            <img src="/img/logo.png" alt="Tone-Z" className="h-[42px]" />
+            <img src="/img/logo.png" alt="Tone-Z" className="h-[52px]" />
           </a>
           <button
             onClick={logout}
-            className="rounded-full border border-[#ffb7b1] bg-white/70 px-6 py-2.5 text-[15px] text-[#ff8b87] backdrop-blur-sm hover:bg-white transition"
+            className="rounded-full border border-[#ffb7b1] bg-white/70 px-8 py-3 text-[17px] text-[#ff8b87] backdrop-blur-sm hover:bg-white transition"
           >
             로그아웃
           </button>
@@ -209,7 +209,7 @@ export default function MyPage() {
                 onError={(e) => { e.target.src = "/img/basic_icon.png"; }}
               />
             </div>
-            <p className="text-[22px] font-bold text-[#555]">{user.nickname} 님</p>
+            <p className="text-[26px] font-bold text-[#555]">{user.nickname} 님</p>
           </div>
 
           {/* 탭 버튼 */}
@@ -217,7 +217,7 @@ export default function MyPage() {
             <div className="flex rounded-full bg-white/80 p-1 shadow-sm backdrop-blur-sm">
               <button
                 onClick={() => setTab("results")}
-                className={`rounded-full px-6 py-2 text-[13px] font-semibold transition ${
+                className={`rounded-full px-8 py-2.5 text-[15px] font-semibold transition ${
                   tab === "results" ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white shadow" : "text-[#aaa]"
                 }`}
               >
@@ -225,7 +225,7 @@ export default function MyPage() {
               </button>
               <button
                 onClick={() => setTab("photos")}
-                className={`rounded-full px-6 py-2 text-[13px] font-semibold transition ${
+                className={`rounded-full px-8 py-2.5 text-[15px] font-semibold transition ${
                   tab === "photos" ? "bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] text-white shadow" : "text-[#aaa]"
                 }`}
               >
@@ -251,9 +251,9 @@ export default function MyPage() {
                           const d = toneData[item.tone];
                           return (
                             <div key={item.id} onClick={() => router.push(`/result/${item.tone}`)} className="cursor-pointer rounded-xl border border-[#f5f5f5] bg-white px-5 py-4 shadow-sm hover:border-[#ffb7b1] hover:shadow-md transition">
-                              <p className="text-[12px] text-[#bbb]">{formatDate(item.created_at)}</p>
-                              <p className="text-[14px] font-semibold text-[#555]">{d?.type ?? item.tone ?? "알 수 없음"}</p>
-                              <p className="mt-1 truncate text-[12px] text-[#888]">{d?.desc ?? ""}</p>
+                              <p className="text-[13px] text-[#bbb]">{formatDate(item.created_at)}</p>
+                              <p className="text-[16px] font-semibold text-[#555]">{d?.type ?? item.tone ?? "알 수 없음"}</p>
+                              <p className="mt-1 truncate text-[13px] text-[#888]">{d?.desc ?? ""}</p>
                             </div>
                           );
                         })}
@@ -315,14 +315,14 @@ export default function MyPage() {
           <div className="fixed bottom-5 left-0 right-0 flex justify-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm">
           <button
             onClick={() => router.push("/scan")}
-            className="rounded-full border-2 border-[#ffb7b1] px-8 py-3 text-[14px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
+            className="rounded-full border-2 border-[#ffb7b1] px-10 py-3.5 text-[16px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
           >
             {history.length > 0 ? "다시 진단하기" : "진단하기"}
           </button>
           {history.length > 0 && (
             <button
               onClick={() => setShowResultModal(true)}
-              className="rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-8 py-3 text-[14px] font-semibold text-white shadow-md hover:opacity-90 transition"
+              className="rounded-full bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] px-10 py-3.5 text-[16px] font-semibold text-white shadow-md hover:opacity-90 transition"
             >
               이메일로 결과 공유하기
             </button>
@@ -333,7 +333,7 @@ export default function MyPage() {
 
       <button
         onClick={() => router.push("/chatbot")}
-        className="fixed bottom-8 right-8 h-[70px] w-[70px]"
+        className="fixed bottom-8 right-8 h-[90px] w-[90px]"
       >
         <img src="/img/chatbot_icon.png" alt="챗봇" className="h-full w-full" />
       </button>
