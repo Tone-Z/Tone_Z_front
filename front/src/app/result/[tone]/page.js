@@ -626,8 +626,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
       )}
 
     <section className="relative flex justify-center px-[8%] pb-24">
-      <div className="relative flex w-full max-w-[850px] items-center justify-center px-5 py-7">
-        <img src="/img/choice.png" alt="" className="absolute inset-0 h-full w-full" />
+      <div className="relative flex w-full max-w-[850px] items-center justify-center px-5 py-5" style={{ backgroundImage: "url('/img/choice.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" }}>
         <button
           onClick={() => router.push("/scan")}
           className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-5 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]"
