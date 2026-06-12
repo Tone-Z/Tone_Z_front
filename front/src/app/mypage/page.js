@@ -235,7 +235,7 @@ export default function MyPage() {
           </div>
 
           {/* 탭 콘텐츠 */}
-          <div className={`rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm ${isFullscreen ? "min-h-[540px]" : "min-h-[420px]"}`}>
+          <div className={`flex flex-col rounded-2xl bg-white/90 px-6 py-6 shadow-sm backdrop-blur-sm ${isFullscreen ? "min-h-[540px]" : "min-h-[420px]"}`}>
             {tab === "results" ? (
               loading ? (
                 <p className="text-center text-[13px] text-[#aaa]">불러오는 중...</p>
@@ -243,9 +243,13 @@ export default function MyPage() {
                 <p className="py-4 text-center text-[13px] text-[#aaa]">아직 진단 결과가 없어요.</p>
               ) : (() => {
                   const totalPages = Math.ceil(history.length / PAGE_SIZE);
-                  const pageItems = history.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+                  const remainder = history.length % PAGE_SIZE || PAGE_SIZE;
+                  // 첫 페이지 = 나머지, 이후 페이지 = PAGE_SIZE씩
+                  const pageItems = page === 0
+                    ? history.slice(0, remainder)
+                    : history.slice(remainder + (page - 1) * PAGE_SIZE, remainder + page * PAGE_SIZE);
                   return (
-                    <>
+                    <div className="flex flex-1 flex-col justify-between">
                       <div className="space-y-3">
                         {pageItems.map((item) => {
                           const d = toneData[item.tone];
@@ -271,7 +275,7 @@ export default function MyPage() {
                           ))}
                         </div>
                       )}
-                    </>
+                    </div>
                   );
                 })()
             ) : photocards.length === 0 ? (
