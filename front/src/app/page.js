@@ -52,7 +52,8 @@ export default function Home() {
             height={40}
             quality={100}
             priority
-            className="h-auto w-[110px]"
+            className="w-[110px]"
+            style={{ height: "auto" }}
           />
         </Link>
 

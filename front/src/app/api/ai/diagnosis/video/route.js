@@ -5,7 +5,7 @@ export async function POST(request) {
   const backendUrl = process.env.AI_BACKEND_URL || "http://127.0.0.1:8000";
 
   try {
-    const res = await fetch(`${backendUrl}/diagnosis`, {
+    const res = await fetch(`${backendUrl}/diagnosis/video`, {
       method: "POST",
       body: formData,
     });
@@ -14,7 +14,7 @@ export async function POST(request) {
     return NextResponse.json(data, { status: res.status });
   } catch (e) {
     return NextResponse.json(
-      { error: "진단 서버와 연결할 수 없어요." },
+      { error: "영상 진단 서버와 연결할 수 없어요." },
       { status: 500 },
     );
   }
