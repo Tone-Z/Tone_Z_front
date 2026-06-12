@@ -273,7 +273,7 @@ function MakeupSection({ data }) {
 
                   <div>
                     {item.brand && (
-                      <p className="text-[11px] mb-1 font-medium text-[#555]">
+                      <p className="text-[11px] mb-1 font-medium" style={{ color: data.badgeColor }}>
                         {item.brand}
                       </p>
                     )}
