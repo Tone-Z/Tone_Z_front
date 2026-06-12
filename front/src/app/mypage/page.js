@@ -28,12 +28,12 @@ export default function MyPage() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 3;
   const [photoPage, setPhotoPage] = useState(0);
   const PHOTO_PAGE_SIZE = 4;
   const [photocards, setPhotocards] = useState([]);
   const [tab, setTab] = useState("results");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const PAGE_SIZE = isFullscreen ? 5 : 3;
 
   useEffect(() => {
     const update = () => setIsFullscreen(window.innerHeight >= window.screen.height - 50);
@@ -198,7 +198,7 @@ export default function MyPage() {
           </button>
         </div>
 
-        <div className="mx-auto max-w-[720px] px-6 pb-48">
+        <div className="mx-auto max-w-[720px] px-6 pb-32">
           {/* 프로필 */}
           <div className="mb-6 flex flex-col items-center pt-36">
             <div className="mb-3 h-[100px] w-[100px] overflow-hidden rounded-full border-4 border-white shadow-md">
@@ -312,7 +312,7 @@ export default function MyPage() {
           </div>
 
           {/* 하단 버튼 */}
-          <div className="fixed bottom-5 left-0 right-0 flex justify-center gap-4 px-6 py-4 bg-white/80 backdrop-blur-sm">
+          <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center gap-4 px-6 py-5 bg-white/90 backdrop-blur-sm shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
           <button
             onClick={() => router.push("/scan")}
             className="rounded-full border-2 border-[#ffb7b1] px-10 py-3.5 text-[16px] font-semibold text-[#ff8b87] hover:bg-[#fff0f0] transition"
