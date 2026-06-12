@@ -595,7 +595,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
           <div className="w-[90%] max-w-[420px] rounded-2xl bg-white px-8 py-7 shadow-xl">
             <h3 className="mb-1 text-[18px] font-bold text-[#555]">결과 공유하기</h3>
             <p className="mb-5 text-[13px] text-[#999]">
-              <span className="font-semibold text-[#ff8b87]">{data.koreanType}</span> 결과를 이메일로 보내드릴게요.
+              <span className="font-semibold" style={{ color: data.badgeColor }}>{data.koreanType}</span> 결과를 이메일로 보내드릴게요.
             </p>
             <input
               type="email"
