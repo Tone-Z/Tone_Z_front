@@ -56,7 +56,7 @@ export default function PhotoCardPage() {
               <div
                 key={frame.id}
                 onClick={() => setSelected(frame.id)}
-                className={`w-[240px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
+                className={`w-[300px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
                   selected === frame.id
                     ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
                     : "hover:scale-[1.02]"
@@ -74,7 +74,7 @@ export default function PhotoCardPage() {
               <div
                 key={frame.id}
                 onClick={() => setSelected(frame.id)}
-                className={`w-[240px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
+                className={`w-[300px] flex-shrink-0 cursor-pointer transition-all duration-200 ${
                   selected === frame.id
                     ? "scale-[1.05] drop-shadow-[0_0_10px_rgba(255,139,135,0.8)]"
                     : "hover:scale-[1.02]"
