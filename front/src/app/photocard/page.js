@@ -54,7 +54,7 @@ export default function PhotoCardPage() {
             window.location.href = stored ? "/mypage" : "/login?redirect=/mypage";
           }}
         >
-          <img src="/img/MyPage_button.png" alt="My Page" className="h-auto w-[clamp(100px,10vw,160px)]" />
+          <img src="/img/MyPage_button.png" alt="My Page" className="h-auto w-[clamp(100px,10vw,160px)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]" />
         </button>
       </div>
 
