@@ -19,6 +19,7 @@ export default function ScanPage() {
   const [cameraOn, setCameraOn] = useState(false);
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
+  const [errorPopup, setErrorPopup] = useState("");
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -109,7 +110,7 @@ export default function ScanPage() {
         data = await requestSingleFrameDiagnosis(frames[0]);
       } catch (singleError) {
         stopCamera();
-        setError(singleError.message || "진단 서버와 연결할 수 없어요.");
+        setErrorPopup(singleError.message || "진단 서버와 연결할 수 없어요.");
         return;
       }
     }
@@ -210,6 +211,20 @@ export default function ScanPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#FFF6F6]">
+      {errorPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-[90%] max-w-[360px] rounded-2xl bg-white px-8 py-7 shadow-xl text-center">
+            <p className="mb-1 text-[14px] text-[#999]">조명이 밝은 곳에서</p>
+            <p className="mb-6 text-[14px] text-[#999]">정면을 바라보고 다시 시도해보세요 ♥</p>
+            <button
+              onClick={() => { setErrorPopup(""); window.location.reload(); }}
+              className="w-full rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90 transition"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      )}
       <header className="relative z-30 flex h-[72px] w-full items-center justify-between px-8">
         <Link href="/">
           <Image
