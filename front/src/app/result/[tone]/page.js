@@ -79,6 +79,10 @@ function ResultHeader({ data, userName, tone }) {
         <div className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2">
           <img src={getSeasonResultImg(tone)} alt="퍼스널컬러 진단 결과" className="h-auto w-[clamp(260px,26vw,400px)]" />
         </div>
+
+        <a href="/mypage" className="ml-auto transition hover:opacity-80">
+          <img src="/img/MyPage_button.png" alt="My Page" className="h-auto w-[clamp(100px,10vw,160px)]" />
+        </a>
       </div>
 
       <img
