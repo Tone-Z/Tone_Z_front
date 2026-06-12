@@ -105,7 +105,7 @@ function ResultHeader({ data, userName, tone }) {
             return (
               <>
                 {data.title.substring(0, idx)}
-                <span className="font-normal text-[clamp(12px,1.2vw,18px)]">입니다.</span>
+                <span className="ml-3 font-normal text-[clamp(12px,1.2vw,18px)]">입니다.</span>
               </>
             );
           })()}
@@ -139,7 +139,7 @@ function ResultHeader({ data, userName, tone }) {
 function BestColor({ data }) {
   return (
     <section className="px-[8%] py-[6%]">
-      <h2 className="mb-10 text-[clamp(13px,1vw,18px)] font-bold text-[#999]">
+      <h2 className="mb-10 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
         {data.koreanType} BEST COLOR
       </h2>
 
@@ -237,7 +237,7 @@ function MakeupSection({ data }) {
 
   return (
     <section className="overflow-hidden px-[8%] py-[4%]">
-      <h2 className="mb-8 text-[clamp(13px,1vw,18px)] font-bold text-[#999]">
+      <h2 className="mb-8 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
         추천 메이크업 아이템
       </h2>
 
@@ -317,7 +317,7 @@ function MakeupSection({ data }) {
 }
 
 function VideoCard({ video, isLarge, playing, onPlay }) {
-  const thumbH = "h-[22vw] max-h-[320px] min-h-[180px]";
+  const thumbH = "h-[27vw] max-h-[400px] min-h-[220px]";
   const wrap = `w-full overflow-hidden rounded-2xl border border-[#eee] bg-white ${isLarge ? "shadow-md" : "shadow-sm"}`;
 
   if (!video) return (
@@ -468,13 +468,13 @@ function VideoSection({ data, tone }) {
 
   return (
     <section className="px-[8%] py-[7%] text-center">
-      <h2 className="mb-10 text-[clamp(13px,1vw,18px)] font-bold text-[#999]">
+      <h2 className="mb-10 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
         {data.koreanType} 메이크업 가이드
       </h2>
       {videos.length === 0 ? (
         <p className="text-[#999]">영상을 불러오는 중이에요...</p>
       ) : (
-        <div className="relative" style={{ height: "clamp(300px, 30vw, 460px)" }}>
+        <div className="relative" style={{ height: "clamp(380px, 38vw, 580px)" }}>
           {slots.map(({ offset, pos }) => (
             <div
               key={getVideoIdx(offset)}
