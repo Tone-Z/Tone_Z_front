@@ -273,7 +273,7 @@ function MakeupSection({ data }) {
 
                   <div>
                     {item.brand && (
-                      <p className="text-[11px] mb-1 font-medium" style={{ color: data.badgeColor }}>
+                      <p className="text-[11px] mb-1 font-medium text-[#555]">
                         {item.brand}
                       </p>
                     )}
@@ -283,13 +283,13 @@ function MakeupSection({ data }) {
                     </h3>
 
                     {item.shade && (
-                      <p className="mt-1 text-[12px] font-medium text-[#888]">
+                      <p className="mt-1 text-[12px] font-medium text-[#555]">
                         {item.shade}
                       </p>
                     )}
 
                     {item.price && (
-                      <p className="mt-2 text-[13px] font-bold text-[#777]">
+                      <p className="mt-2 text-[13px] font-bold text-[#555]">
                         {Number(item.price).toLocaleString()}원
                       </p>
                     )}
