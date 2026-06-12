@@ -268,7 +268,6 @@ function MakeupSection({ data }) {
                     />
                   ) : (
                     <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-[#ffeaea] text-[28px]">
-                      🎨
                     </div>
                   )}
 
@@ -296,7 +295,7 @@ function MakeupSection({ data }) {
 
                     {item.shade && (
                       <p className="mt-1 text-[12px] text-[#ff8b87] font-medium">
-                        🎨 {item.shade}
+                        {item.shade}
                       </p>
                     )}
 
