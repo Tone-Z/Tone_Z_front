@@ -43,7 +43,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#fff7f7]">
 
       {/* 헤더 */}
-      <header className={`fixed top-0 left-0 right-0 z-20 flex h-[72px] w-full justify-between bg-white px-6 ${isFullscreen ? "items-end pb-1" : "items-center"}`}>
+      <header className={`fixed top-0 left-0 right-0 z-20 flex w-full justify-between bg-white px-6 ${isFullscreen ? "h-[90px] items-end pb-4" : "h-[72px] items-center"}`}>
         <Link href="/">
           <Image
             src="/img/logo.png"
