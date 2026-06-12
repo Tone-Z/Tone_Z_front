@@ -246,7 +246,7 @@ export default function ScanPage() {
         </div>
 
         <div className="absolute left-1/2 top-[47%] z-20 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative h-[470px] w-[600px] overflow-hidden rounded-[42px] border-[5px] border-[#ffd1dc] bg-black shadow-[0_0_35px_rgba(255,145,168,0.75)]">
+          <div className="relative h-[520px] w-[660px] overflow-hidden rounded-[42px] border-[5px] border-[#ffd1dc] bg-black shadow-[0_0_35px_rgba(255,145,168,0.75)]">
             <video
               ref={videoRef}
               autoPlay
