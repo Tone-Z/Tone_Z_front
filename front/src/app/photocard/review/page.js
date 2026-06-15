@@ -198,7 +198,7 @@ export default function ReviewPage() {
             </a>
             <button
               onClick={() => router.push("/photocard/camera")}
-              className="text-[13px] text-[#ffb7b1] hover:text-[#ff7070] transition"
+              className="rounded-full border border-[#ffb7b1] px-5 py-2 text-[15px] text-[#ff8b87] hover:bg-[#fff0f0] transition"
             >
               다시 찍기
             </button>

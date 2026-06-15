@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     const update = () => {
       const fs = window.innerHeight >= window.screen.height - 50;
-      setBtnTop(fs ? "52%" : "50%");
+      setBtnTop(fs ? "49%" : "47%");
       setBgPos(fs ? "center 45%" : "center 100%");
     };
     update();
