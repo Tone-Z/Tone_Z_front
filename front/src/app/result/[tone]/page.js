@@ -327,7 +327,7 @@ function VideoCard({ video, isLarge, playing, onPlay }) {
     <div className={wrap}>
       <iframe
         className={`w-full ${thumbH}`}
-        src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1`}
+        src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1&enablejsapi=1`}
         title={video.title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
@@ -411,6 +411,24 @@ function VideoSection({ data, tone }) {
     }
     getVideos();
   }, [data.koreanType]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.event === "onError" && [100, 101, 150].includes(data.info)) {
+          setVideos((prev) => {
+            const filtered = prev.filter((v) => v.videoId !== videos[center]?.videoId);
+            return filtered;
+          });
+          setPlaying(false);
+          setCenter((prev) => prev % Math.max(1, videos.length - 1));
+        }
+      } catch {}
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [center, videos]);
 
   const changeVideo = (type) => {
     if (videos.length === 0 || isChanging.current) return;
