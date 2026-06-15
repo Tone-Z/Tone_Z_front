@@ -267,7 +267,6 @@ function MakeupSection({ data }) {
                 <a
                   key={(item.link || item.title) + index}
                   href={item.link || undefined}
-                  target={item.link ? "_blank" : undefined}
                   className="flex min-h-[135px] items-center gap-5 rounded-2xl border border-[#eee] bg-white px-6 py-4 shadow-sm"
                 >
                   {item.image ? (
