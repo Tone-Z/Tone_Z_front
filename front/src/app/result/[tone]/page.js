@@ -2,6 +2,7 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toneData } from "../data";
 
 export default function ResultPage({ params }) {
@@ -665,11 +666,11 @@ function BottomButtons({ data, tone, onChatOpen }) {
 
         <img src="/img/row.png" alt="" className="relative mx-3 h-6 w-auto flex-shrink-0" />
 
-        <a href="/photocard" className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-4 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
+        <Link href="/photocard" className="group relative flex flex-1 items-center justify-center gap-4 rounded-full py-4 text-[clamp(10px,0.9vw,14px)] font-semibold text-[#ff7070]">
           <img src="/img/choice2.png" alt="" className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           <img src="/img/picture.png" alt="네컷" className="relative h-6 w-6" />
           <span className="relative">네컷사진 만들기</span>
-        </a>
+        </Link>
       </div>
 
       <button
