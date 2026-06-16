@@ -44,24 +44,6 @@ async function warmTone(tone) {
   }
 })();
 
-async function fetchItem(name) {
-  try {
-    const res = await fetch(
-      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(name)}&display=1&sort=sim`,
-      {
-        headers: {
-          "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
-          "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
-        },
-      }
-    );
-    const data = await res.json();
-    return data.items?.[0] ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const tone = searchParams.get("tone");
