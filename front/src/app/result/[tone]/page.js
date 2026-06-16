@@ -173,7 +173,9 @@ function BestColor({ data }) {
 }
 
 function MakeupSection({ data, tone }) {
+  const [page, setPage] = useState(0);
   const [products, setProducts] = useState([]);
+  const itemCount = 6;
 
   useEffect(() => {
     async function getProducts() {
@@ -188,8 +190,21 @@ function MakeupSection({ data, tone }) {
     getProducts();
   }, [tone]);
 
+  const totalPage = Math.ceil(products.length / itemCount);
+
+  useEffect(() => {
+    if (totalPage === 0) return;
+    const timer = setInterval(() => {
+      setPage((prev) => (prev + 1) % totalPage);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [totalPage]);
+
+  const start = page * itemCount;
+  const currentItems = products.slice(start, start + itemCount);
+
   return (
-    <section className="px-[8%] py-[4%]">
+    <section className="overflow-hidden px-[8%] py-[4%]">
       <h2 className="mb-8 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
         추천 메이크업 제품
       </h2>
@@ -197,27 +212,37 @@ function MakeupSection({ data, tone }) {
       {products.length === 0 ? (
         <p className="text-[#999]">추천 제품을 불러오는 중이에요...</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((item, index) => (
-            <a
-              key={(item.link || item.title) + index}
-              href={item.link || undefined}
-              className="flex items-center gap-4 rounded-2xl border border-[#eee] bg-white px-5 py-4 shadow-sm hover:border-[#ffb7b1] hover:shadow-md transition"
+        <div key={page} className="space-y-5 animate-makeupFlow">
+          {[0, 1, 2].map((row) => (
+            <div
+              key={row}
+              className={
+                "grid grid-cols-1 gap-5 transition-all duration-700 md:grid-cols-2 " +
+                (row === 1 ? "md:translate-x-10" : "md:-translate-x-6")
+              }
             >
-              {item.image ? (
-                <img src={item.image} alt={item.title} className="h-20 w-20 shrink-0 object-contain" />
-              ) : (
-                <div className="h-20 w-20 shrink-0 rounded-xl bg-[#ffeaea]" />
-              )}
-              <div>
-                {item.brand && (
-                  <p className="text-[11px] mb-1 font-medium" style={{ color: data.badgeColor }}>{item.brand}</p>
-                )}
-                <h3 className="text-[clamp(11px,0.9vw,14px)] font-semibold text-[#555]">{item.title}</h3>
-                {item.shade && <p className="mt-1 text-[11px] text-[#555]">{item.shade}</p>}
-                {item.price && <p className="mt-1 text-[12px] font-bold text-[#555]">{Number(item.price).toLocaleString()}원</p>}
-              </div>
-            </a>
+              {currentItems.slice(row * 2, row * 2 + 2).map((item, index) => (
+                <a
+                  key={(item.link || item.title) + index}
+                  href={item.link || undefined}
+                  className="flex min-h-[135px] items-center gap-5 rounded-2xl border border-[#eee] bg-white px-6 py-4 shadow-sm"
+                >
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} className="h-24 w-24 shrink-0 object-contain" />
+                  ) : (
+                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-[#ffeaea]" />
+                  )}
+                  <div>
+                    {item.brand && (
+                      <p className="text-[11px] mb-1 font-medium" style={{ color: data.badgeColor }}>{item.brand}</p>
+                    )}
+                    <h3 className="text-[clamp(12px,0.95vw,15px)] font-semibold text-[#555]">{item.title}</h3>
+                    {item.shade && <p className="mt-1 text-[12px] font-medium text-[#555]">{item.shade}</p>}
+                    {item.price && <p className="mt-2 text-[13px] font-bold text-[#555]">{Number(item.price).toLocaleString()}원</p>}
+                  </div>
+                </a>
+              ))}
+            </div>
           ))}
         </div>
       )}
