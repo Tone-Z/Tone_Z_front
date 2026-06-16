@@ -41,7 +41,7 @@ export default function PhotoCardPage() {
 
   return (
     <main className="relative min-h-screen bg-[#fde8f0]">
-      <Image src="/img/Photo_Page.png" alt="" fill priority className="object-cover object-top" />
+      <Image src="/img/Photo_Page.webp" alt="" fill priority className="object-cover object-top" />
       <div className="relative z-10 flex items-center justify-between px-8 pt-8 pb-8">
         <a href="/">
           <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
