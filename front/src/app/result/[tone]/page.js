@@ -200,26 +200,26 @@ function MakeupSection({ data }) {
             batch.map((item) => fetchItem(item.name))
           );
           results.push(...batchResults);
+
+          const items = results.map((result, index) => {
+            const apiItem = result.items?.[0];
+            const productItem = data.productItems[index];
+            return {
+              image: apiItem?.image || null,
+              title: productItem.name,
+              shade: productItem.shade,
+              link: apiItem?.link || null,
+              price: apiItem?.lprice || null,
+              brand: apiItem?.brand || apiItem?.maker || "",
+              tags: ["추천", "Naver"],
+            };
+          });
+          setProducts(items);
+
           if (i + BATCH < data.productItems.length) {
             await new Promise((r) => setTimeout(r, 250));
           }
         }
-
-        const items = results.map((result, index) => {
-          const apiItem = result.items?.[0];
-          const productItem = data.productItems[index];
-          return {
-            image: apiItem?.image || null,
-            title: productItem.name,
-            shade: productItem.shade,
-            link: apiItem?.link || null,
-            price: apiItem?.lprice || null,
-            brand: apiItem?.brand || apiItem?.maker || "",
-            tags: ["추천", "Naver"],
-          };
-        });
-
-        setProducts(items);
       } catch (error) {
         console.log(error);
         setProducts([]);
