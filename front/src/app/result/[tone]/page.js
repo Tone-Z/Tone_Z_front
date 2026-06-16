@@ -374,12 +374,18 @@ function VideoSection({ data, tone }) {
         const result = await res.json();
         const items = (result.items || []).map((item) => {
           const videoId = item.id.videoId;
+          const thumbnails = item.snippet.thumbnails;
+          const thumbnail =
+            thumbnails?.high?.url ||
+            thumbnails?.medium?.url ||
+            thumbnails?.default?.url ||
+            `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
           return {
             videoId,
             title: item.snippet.title,
             channel: item.snippet.channelTitle,
-            thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
-            thumbnailFallback: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+            thumbnail,
+            thumbnailFallback: `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
           };
         });
         if (items.length > 0) setVideos(items);
