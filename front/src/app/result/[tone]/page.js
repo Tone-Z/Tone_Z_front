@@ -179,21 +179,34 @@ function MakeupSection({ data }) {
 
   useEffect(() => {
     async function fetchItem(name) {
-      try {
-        const res = await fetch("/api/shopping?query=" + encodeURIComponent(name));
-        const d = await res.json();
-        if (d.items?.length > 0) return d;
-      } catch {}
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const res = await fetch("/api/shopping?query=" + encodeURIComponent(name));
+          const data = await res.json();
+          if (data.items?.length > 0) return data;
+        } catch {}
+        if (attempt < 2) await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+      }
       return { items: [] };
     }
 
     async function getProducts() {
       try {
-        const results = await Promise.all(
-          data.productItems.map((item) => fetchItem(item.name))
-        );
+        const BATCH = 3;
+        const results = [];
+        for (let i = 0; i < data.productItems.length; i += BATCH) {
+          const batch = data.productItems.slice(i, i + BATCH);
+          const batchResults = await Promise.all(
+            batch.map((item) => fetchItem(item.name))
+          );
+          results.push(...batchResults);
+          if (i + BATCH < data.productItems.length) {
+            await new Promise((r) => setTimeout(r, 250));
+          }
+        }
+
         const items = results.map((result, index) => {
-          const apiItem = result.items?.find((i) => i.image) ?? result.items?.[0];
+          const apiItem = result.items?.[0];
           const productItem = data.productItems[index];
           return {
             image: apiItem?.image || null,
@@ -202,13 +215,17 @@ function MakeupSection({ data }) {
             link: apiItem?.link || null,
             price: apiItem?.lprice || null,
             brand: apiItem?.brand || apiItem?.maker || "",
+            tags: ["추천", "Naver"],
           };
         });
+
         setProducts(items);
-      } catch {
+      } catch (error) {
+        console.log(error);
         setProducts([]);
       }
     }
+
     getProducts();
   }, [data.productItems]);
 
