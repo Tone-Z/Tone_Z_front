@@ -40,7 +40,7 @@ export default function ResultPage({ params }) {
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
         <BestColor data={data} />
-        <MakeupSection data={data} tone={tone} />
+        <MakeupSection data={data} />
         <VideoSection data={data} tone={tone} />
         <TipSection data={data} />
         <BottomButtons data={data} tone={tone} onChatOpen={() => setChatOpen(true)} />
@@ -172,23 +172,45 @@ function BestColor({ data }) {
   );
 }
 
-function MakeupSection({ data, tone }) {
+function MakeupSection({ data }) {
   const [page, setPage] = useState(0);
   const [products, setProducts] = useState([]);
   const itemCount = 6;
 
   useEffect(() => {
+    async function fetchItem(name) {
+      try {
+        const res = await fetch("/api/shopping?query=" + encodeURIComponent(name));
+        const d = await res.json();
+        if (d.items?.length > 0) return d;
+      } catch {}
+      return { items: [] };
+    }
+
     async function getProducts() {
       try {
-        const res = await fetch("/api/makeup?tone=" + encodeURIComponent(tone));
-        const json = await res.json();
-        setProducts(json.items ?? []);
+        const results = await Promise.all(
+          data.productItems.map((item) => fetchItem(item.name))
+        );
+        const items = results.map((result, index) => {
+          const apiItem = result.items?.[0];
+          const productItem = data.productItems[index];
+          return {
+            image: apiItem?.image || null,
+            title: productItem.name,
+            shade: productItem.shade,
+            link: apiItem?.link || null,
+            price: apiItem?.lprice || null,
+            brand: apiItem?.brand || apiItem?.maker || "",
+          };
+        });
+        setProducts(items);
       } catch {
         setProducts([]);
       }
     }
     getProducts();
-  }, [tone]);
+  }, [data.productItems]);
 
   const totalPage = Math.ceil(products.length / itemCount);
 
@@ -230,7 +252,7 @@ function MakeupSection({ data, tone }) {
                   {item.image ? (
                     <img src={item.image} alt={item.title} className="h-24 w-24 shrink-0 object-contain" />
                   ) : (
-                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-[#ffeaea]" />
+                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-[#ffeaea] text-[36px]">💄</div>
                   )}
                   <div>
                     {item.brand && (
