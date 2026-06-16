@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 const frames = [
-  { id: "original", src: "/img/Photo_Original.png", name: "오리지널" },
-  { id: "fourseason1", src: "/img/Photo_FourSeason_1.png", name: "사계절1" },
-  { id: "fourseason2", src: "/img/Photo_FourSeason_2.png", name: "사계절2" },
-  { id: "spring", src: "/img/Photo_Spring.png", name: "봄" },
-  { id: "summer", src: "/img/Photo_Summer.png", name: "여름" },
-  { id: "autumn", src: "/img/Photo_Autumn.png", name: "가을" },
-  { id: "winter", src: "/img/Photo_Winter.png", name: "겨울" },
+  { id: "original", src: "/img/Photo_Original.webp", name: "오리지널" },
+  { id: "fourseason1", src: "/img/Photo_FourSeason_1.webp", name: "사계절1" },
+  { id: "fourseason2", src: "/img/Photo_FourSeason_2.webp", name: "사계절2" },
+  { id: "spring", src: "/img/Photo_Spring.webp", name: "봄" },
+  { id: "summer", src: "/img/Photo_Summer.webp", name: "여름" },
+  { id: "autumn", src: "/img/Photo_Autumn.webp", name: "가을" },
+  { id: "winter", src: "/img/Photo_Winter.webp", name: "겨울" },
 ];
 
 function toneToFrame(tone) {
@@ -40,9 +39,8 @@ export default function PhotoCardPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#fde8f0]">
-      <Image src="/img/Photo_Page.webp" alt="" fill priority className="object-cover object-top" />
-      <div className="relative z-10 flex items-center justify-between px-8 pt-8 pb-8">
+    <main className="relative min-h-screen bg-[#fde8f0]" style={{ backgroundImage: "url('/img/Photo_Page.webp')", backgroundSize: "cover", backgroundPosition: "center top" }}>
+      <div className="flex items-center justify-between px-8 pt-8 pb-8">
         <a href="/">
           <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
         </a>
@@ -57,7 +55,7 @@ export default function PhotoCardPage() {
         </button>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-[1200px] px-6 pt-130 pb-24">
+      <div className="mx-auto max-w-[1200px] px-6 pt-130 pb-24">
         <div className="flex flex-col gap-6">
           <div className="flex justify-center gap-6">
             {frames.slice(0, 3).map((frame) => (
@@ -71,7 +69,7 @@ export default function PhotoCardPage() {
                 }`}
               >
                 <div className="relative w-full">
-                  <img src="/img/white_page.png" alt="" className="w-full" />
+                  <img src="/img/white_page.webp" alt="" className="w-full" />
                   <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
                 </div>
               </div>
@@ -89,7 +87,7 @@ export default function PhotoCardPage() {
                 }`}
               >
                 <div className="relative w-full">
-                  <img src="/img/white_page.png" alt="" className="w-full" />
+                  <img src="/img/white_page.webp" alt="" className="w-full" />
                   <img src={frame.src} alt={frame.name} className="absolute inset-0 h-full w-full object-contain p-8" />
                 </div>
               </div>
