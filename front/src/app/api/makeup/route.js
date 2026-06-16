@@ -37,12 +37,6 @@ async function warmTone(tone) {
   cache.set(tone, items);
 }
 
-// 서버 시작 시 모든 톤 캐시 미리 채우기
-(async () => {
-  for (const tone of Object.keys(toneData)) {
-    warmTone(tone).catch(() => {});
-  }
-})();
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -53,7 +47,10 @@ export async function GET(request) {
   }
 
   if (cache.has(tone)) {
-    return Response.json({ items: cache.get(tone) });
+    const cached = cache.get(tone);
+    if (cached.some((item) => item.image)) {
+      return Response.json({ items: cached });
+    }
   }
 
   await warmTone(tone);
