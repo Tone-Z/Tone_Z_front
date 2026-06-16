@@ -13,7 +13,7 @@ export async function GET(request) {
   }
 
   const response = await fetch(
-    `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(query)}&display=1&sort=sim`,
+    `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(query)}&display=20&sort=sim`,
     {
       headers: {
         "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,

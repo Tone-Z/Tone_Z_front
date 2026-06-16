@@ -193,7 +193,7 @@ function MakeupSection({ data }) {
           data.productItems.map((item) => fetchItem(item.name))
         );
         const items = results.map((result, index) => {
-          const apiItem = result.items?.[0];
+          const apiItem = result.items?.find((i) => i.image) ?? result.items?.[0];
           const productItem = data.productItems[index];
           return {
             image: apiItem?.image || null,
