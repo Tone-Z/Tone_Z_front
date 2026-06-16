@@ -5,7 +5,7 @@ const cache = new Map();
 async function fetchItem(name) {
   try {
     const res = await fetch(
-      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(name)}&display=1&sort=sim`,
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(name)}&display=5&sort=sim`,
       {
         headers: {
           "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
@@ -14,7 +14,7 @@ async function fetchItem(name) {
       }
     );
     const data = await res.json();
-    return data.items?.[0] ?? null;
+    return data.items?.find((item) => item.image) ?? data.items?.[0] ?? null;
   } catch {
     return null;
   }
