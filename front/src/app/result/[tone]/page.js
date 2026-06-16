@@ -40,7 +40,7 @@ export default function ResultPage({ params }) {
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
         <BestColor data={data} />
-        <MakeupSection data={data} />
+        <MakeupSection data={data} tone={tone} />
         <VideoSection data={data} tone={tone} />
         <TipSection data={data} />
         <BottomButtons data={data} tone={tone} onChatOpen={() => setChatOpen(true)} />
@@ -172,64 +172,23 @@ function BestColor({ data }) {
   );
 }
 
-function MakeupSection({ data }) {
+function MakeupSection({ data, tone }) {
   const [page, setPage] = useState(0);
   const [products, setProducts] = useState([]);
   const itemCount = 6;
 
   useEffect(() => {
-    async function fetchItem(name) {
-      for (let attempt = 0; attempt < 3; attempt++) {
-        try {
-          const res = await fetch("/api/shopping?query=" + encodeURIComponent(name));
-          const data = await res.json();
-          if (data.items?.length > 0) return data;
-        } catch {}
-        if (attempt < 2) await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
-      }
-      return { items: [] };
-    }
-
     async function getProducts() {
       try {
-        const BATCH = 3;
-        const results = [];
-        for (let i = 0; i < data.productItems.length; i += BATCH) {
-          const batch = data.productItems.slice(i, i + BATCH);
-          const batchResults = await Promise.all(
-            batch.map((item) => fetchItem(item.name))
-          );
-          results.push(...batchResults);
-          if (i + BATCH < data.productItems.length) {
-            await new Promise((r) => setTimeout(r, 250));
-          }
-        }
-
-        const items = results
-          .map((result, index) => {
-            const apiItem = result.items?.[0];
-            const productItem = data.productItems[index];
-
-            return {
-              image: apiItem?.image || null,
-              title: productItem.name,
-              shade: productItem.shade,
-              link: apiItem?.link || null,
-              price: apiItem?.lprice || null,
-              brand: apiItem?.brand || apiItem?.maker || "",
-              tags: ["추천", "Naver"],
-            };
-          });
-
-        setProducts(items);
-      } catch (error) {
-        console.log(error);
+        const res = await fetch("/api/makeup?tone=" + encodeURIComponent(tone));
+        const json = await res.json();
+        setProducts(json.items ?? []);
+      } catch {
         setProducts([]);
       }
     }
-
     getProducts();
-  }, [data.productItems]);
+  }, [tone]);
 
   const totalPage = Math.ceil(products.length / itemCount);
 
