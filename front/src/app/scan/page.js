@@ -36,9 +36,11 @@ export default function ScanPage() {
 
     if (!video.videoWidth || !video.videoHeight) return null;
 
+    const MAX_W = 480;
+    const scale = video.videoWidth > MAX_W ? MAX_W / video.videoWidth : 1;
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
@@ -46,7 +48,7 @@ export default function ScanPage() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.9);
+      canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.75);
     });
   }, []);
 
