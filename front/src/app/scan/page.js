@@ -5,9 +5,22 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const MAX_FRAME_COUNT = 24;
+const MAX_FRAME_COUNT = 12;
 const FRAME_CAPTURE_INTERVAL_MS = 60;
+const CAPTURE_PROGRESS_MAX = 88;
+const SUBMIT_PROGRESS_MAX = 98;
+const AI_BACKEND_URL = process.env.NEXT_PUBLIC_AI_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "";
+const DIAGNOSIS_ERROR_MESSAGE = "진단 서버와 연결할 수 없어요. 잠시 후 다시 시도해주세요.";
 
+function getDiagnosisUrl() {
+  const isLocal = typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
+  if (isLocal || !AI_BACKEND_URL) {
+    return "/api/ai/diagnosis";
+  }
+
+  return `${AI_BACKEND_URL.replace(/\/$/, "")}/diagnosis/video`;
+}
 export default function ScanPage() {
   const router = useRouter();
   const videoRef = useRef(null);
@@ -57,12 +70,13 @@ export default function ScanPage() {
 
     isDiagnosingRef.current = true;
     setIsSubmitting(true);
+    setProgress((current) => Math.max(current, 90));
 
     const frames = framesRef.current.slice(0, MAX_FRAME_COUNT);
     let data = null;
     let lastError = null;
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 1; attempt++) {
       try {
         if (attempt > 0) await new Promise((r) => setTimeout(r, 2000 * attempt));
 
@@ -74,13 +88,19 @@ export default function ScanPage() {
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 90000);
 
-        const res = await fetch("/api/ai/diagnosis", {
+        const res = await fetch(getDiagnosisUrl(), {
           method: "POST",
           body: formData,
           signal: controller.signal,
         });
 
         window.clearTimeout(timeoutId);
+
+        const contentType = res.headers.get("content-type") || "";
+
+        if (!contentType.includes("application/json")) {
+          throw new Error("non-json-response");
+        }
 
         const json = await res.json();
 
@@ -95,17 +115,19 @@ export default function ScanPage() {
         if (e.name === "AbortError") {
           stopCamera();
           setErrorPopup("진단 시간이 오래 걸리고 있어요. 다시 시도해주세요.");
+          setProgress(0);
           setIsSubmitting(false);
           isDiagnosingRef.current = false;
           return;
         }
-        lastError = e;
+        lastError = new Error(DIAGNOSIS_ERROR_MESSAGE);
       }
     }
 
     if (!data) {
       stopCamera();
-      setErrorPopup(lastError?.message || "진단 서버와 연결할 수 없어요.");
+      setErrorPopup(lastError?.message || DIAGNOSIS_ERROR_MESSAGE);
+      setProgress(0);
       setIsSubmitting(false);
       isDiagnosingRef.current = false;
       return;
@@ -114,6 +136,7 @@ export default function ScanPage() {
     sessionStorage.setItem("diagnosisResult", JSON.stringify(data));
     sessionStorage.setItem("freshDiagnosis", "true");
 
+    setProgress(100);
     setIsSubmitting(false);
     stopCamera();
     router.push(`/result/${data.season}`);
@@ -173,6 +196,7 @@ export default function ScanPage() {
 
     framesRef.current = [];
     setProgress(0);
+    setIsSubmitting(false);
     isDiagnosingRef.current = false;
 
     const captureAndStoreFrame = async () => {
@@ -186,8 +210,9 @@ export default function ScanPage() {
 
       framesRef.current = [...framesRef.current, blob].slice(0, MAX_FRAME_COUNT);
 
-      const nextProgress = Math.round(
-        (framesRef.current.length / MAX_FRAME_COUNT) * 100,
+      const nextProgress = Math.min(
+        CAPTURE_PROGRESS_MAX,
+        Math.round((framesRef.current.length / MAX_FRAME_COUNT) * CAPTURE_PROGRESS_MAX),
       );
 
       setProgress(nextProgress);
@@ -205,6 +230,19 @@ export default function ScanPage() {
 
     return () => clearInterval(timer);
   }, [mounted, cameraOn, captureFrame, finishDiagnosis]);
+
+  useEffect(() => {
+    if (!isSubmitting) return;
+
+    const timer = setInterval(() => {
+      setProgress((current) => {
+        if (current >= SUBMIT_PROGRESS_MAX) return current;
+        return Math.min(SUBMIT_PROGRESS_MAX, current + 1);
+      });
+    }, 350);
+
+    return () => clearInterval(timer);
+  }, [isSubmitting]);
 
   if (!mounted) return null;
 
@@ -337,6 +375,14 @@ export default function ScanPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
 
 
 
