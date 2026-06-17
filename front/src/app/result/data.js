@@ -446,7 +446,7 @@ export const toneData = {
       { name: "카멜 브라운", eng: "Camel Brown", code: "#C49060" },
       { name: "모카", eng: "Mocha", code: "#A07050" },
       { name: "웜 로즈", eng: "Warm Rose", code: "#C08070" },
-      { name: "팜프킨", eng: "Pumpkin", code: "#D08858" },
+      { name: "펌킨", eng: "Pumpkin", code: "#D08858" },
     ],
 
     tipColor: "#F5AC62",

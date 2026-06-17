@@ -1,46 +1,23 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
     const formData = await request.formData();
     const backendUrl = process.env.AI_BACKEND_URL || "http://127.0.0.1:8000";
-    const files = formData.getAll("files");
+    const endpoint = formData.has("files") ? "/diagnosis/video" : "/diagnosis";
 
-    const pickIndices = files.length > 0
-      ? [Math.floor(files.length * 0.5), Math.floor(files.length * 0.25), Math.floor(files.length * 0.75)]
-      : [0, 0, 0];
+    const res = await fetch(`${backendUrl}${endpoint}`, {
+      method: "POST",
+      body: formData,
+    });
 
-    for (let attempt = 0; attempt < 3; attempt++) {
-      if (attempt > 0) await new Promise((r) => setTimeout(r, 800));
-
-      try {
-        const body = new FormData();
-        if (files.length > 0) {
-          const file = files[pickIndices[attempt]] || files[0];
-          body.append("file", file, "frame.jpg");
-        } else {
-          for (const [key, value] of formData.entries()) {
-            body.append(key, value);
-          }
-        }
-
-        const res = await fetch(`${backendUrl}/diagnosis`, {
-          method: "POST",
-          body,
-        });
-
-        const contentType = res.headers.get("content-type") || "";
-        if (!contentType.includes("application/json")) continue;
-
-        const data = await res.json();
-        if (res.ok && data.season) return NextResponse.json(data);
-      } catch {}
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error("non-json-response");
     }
 
-    return NextResponse.json(
-      { error: "진단 서버와 연결할 수 없어요." },
-      { status: 500 },
-    );
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
   } catch (e) {
     return NextResponse.json(
       { error: "진단 서버와 연결할 수 없어요." },
