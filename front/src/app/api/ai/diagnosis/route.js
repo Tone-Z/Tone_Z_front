@@ -6,13 +6,18 @@ export async function POST(request) {
     const backendUrl = process.env.AI_BACKEND_URL || "http://127.0.0.1:8000";
     const files = formData.getAll("files");
 
+    const pickIndices = files.length > 0
+      ? [Math.floor(files.length * 0.5), Math.floor(files.length * 0.25), Math.floor(files.length * 0.75)]
+      : [0, 0, 0];
+
     for (let attempt = 0; attempt < 3; attempt++) {
-      if (attempt > 0) await new Promise((r) => setTimeout(r, 1000 * attempt));
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 800));
 
       try {
         const body = new FormData();
         if (files.length > 0) {
-          files.forEach((f, i) => body.append("files", f, `frame-${i}.jpg`));
+          const file = files[pickIndices[attempt]] || files[0];
+          body.append("files", file, "frame.jpg");
         } else {
           for (const [key, value] of formData.entries()) {
             body.append(key, value);
