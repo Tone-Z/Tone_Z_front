@@ -9,18 +9,7 @@ const MAX_FRAME_COUNT = 12;
 const FRAME_CAPTURE_INTERVAL_MS = 60;
 const CAPTURE_PROGRESS_MAX = 88;
 const SUBMIT_PROGRESS_MAX = 98;
-const AI_BACKEND_URL = process.env.NEXT_PUBLIC_AI_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "";
 const DIAGNOSIS_ERROR_MESSAGE = "진단 서버와 연결할 수 없어요. 잠시 후 다시 시도해주세요.";
-
-function getDiagnosisUrl() {
-  const isLocal = typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname);
-
-  if (isLocal || !AI_BACKEND_URL) {
-    return "/api/ai/diagnosis";
-  }
-
-  return `${AI_BACKEND_URL.replace(/\/$/, "")}/diagnosis/video`;
-}
 export default function ScanPage() {
   const router = useRouter();
   const videoRef = useRef(null);
@@ -76,7 +65,7 @@ export default function ScanPage() {
     let data = null;
     let lastError = null;
 
-    for (let attempt = 0; attempt < 1; attempt++) {
+    for (let attempt = 0; attempt < 3; attempt++) {
       try {
         if (attempt > 0) await new Promise((r) => setTimeout(r, 2000 * attempt));
 
@@ -88,7 +77,7 @@ export default function ScanPage() {
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 90000);
 
-        const res = await fetch(getDiagnosisUrl(), {
+        const res = await fetch("/api/ai/diagnosis", {
           method: "POST",
           body: formData,
           signal: controller.signal,
