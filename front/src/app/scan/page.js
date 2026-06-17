@@ -9,7 +9,7 @@ const MAX_FRAME_COUNT = 12;
 const FRAME_CAPTURE_INTERVAL_MS = 60;
 const CAPTURE_PROGRESS_MAX = 88;
 const SUBMIT_PROGRESS_MAX = 98;
-const AI_BACKEND_URL = process.env.NEXT_PUBLIC_AI_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "";
+const AI_BACKEND_URL = process.env.NEXT_PUBLIC_AI_BACKEND_URL || "";
 const DIAGNOSIS_ERROR_MESSAGE = "진단 서버와 연결할 수 없어요. 잠시 후 다시 시도해주세요.";
 
 function getDiagnosisUrl() {
@@ -375,6 +375,7 @@ export default function ScanPage() {
     </div>
   );
 }
+
 
 
 
