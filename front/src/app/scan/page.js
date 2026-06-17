@@ -126,6 +126,7 @@ export default function ScanPage() {
     sessionStorage.setItem("freshDiagnosis", "true");
 
     setProgress(100);
+    await new Promise((r) => setTimeout(r, 600));
     setIsSubmitting(false);
     stopCamera();
     router.push(`/result/${data.season}`);

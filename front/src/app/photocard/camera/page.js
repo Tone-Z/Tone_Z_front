@@ -18,7 +18,7 @@ export default function CameraPage() {
   const [frame, setFrame] = useState(null);
   const [slots, setSlots] = useState(null);
   const [photos, setPhotos] = useState([]);
-  const [countdown, setCountdown] = useState(7);
+  const [countdown, setCountdown] = useState(5);
   const [flash, setFlash] = useState(false); // 찍힐 때 플래시 효과
 
   function snap() {
@@ -56,7 +56,7 @@ export default function CameraPage() {
 
   function startCountdown() {
     clearInterval(timerRef.current);
-    let c = 7;
+    let c = 5;
     setCountdown(c);
     timerRef.current = setInterval(() => {
       c--;
