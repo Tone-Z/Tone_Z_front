@@ -60,36 +60,52 @@ export default function ScanPage() {
 
     const frames = framesRef.current.slice(0, MAX_FRAME_COUNT);
     let data = null;
+    let lastError = null;
 
-    try {
-      const formData = new FormData();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        if (attempt > 0) await new Promise((r) => setTimeout(r, 2000 * attempt));
 
-      frames.forEach((blob, index) => {
-        formData.append("files", blob, `frame-${index}.jpg`);
-      });
+        const formData = new FormData();
+        frames.forEach((blob, index) => {
+          formData.append("files", blob, `frame-${index}.jpg`);
+        });
 
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 90000);
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 90000);
 
-      const res = await fetch("/api/ai/diagnosis", {
-        method: "POST",
-        body: formData,
-        signal: controller.signal,
-      });
+        const res = await fetch("/api/ai/diagnosis", {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+        });
 
-      window.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId);
 
-      data = await res.json();
+        const json = await res.json();
 
-      if (!res.ok || data.error || !data.season) {
-        throw new Error(data.error || "영상 기반 진단에 실패했어요.");
+        if (!res.ok || json.error || !json.season) {
+          lastError = new Error(json.error || "영상 기반 진단에 실패했어요.");
+          continue;
+        }
+
+        data = json;
+        break;
+      } catch (e) {
+        if (e.name === "AbortError") {
+          stopCamera();
+          setErrorPopup("진단 시간이 오래 걸리고 있어요. 다시 시도해주세요.");
+          setIsSubmitting(false);
+          isDiagnosingRef.current = false;
+          return;
+        }
+        lastError = e;
       }
-    } catch (videoError) {
+    }
+
+    if (!data) {
       stopCamera();
-      const message = videoError.name === "AbortError"
-        ? "진단 시간이 오래 걸리고 있어요. 다시 시도해주세요."
-        : videoError.message || "진단 서버와 연결할 수 없어요.";
-      setErrorPopup(message);
+      setErrorPopup(lastError?.message || "진단 서버와 연결할 수 없어요.");
       setIsSubmitting(false);
       isDiagnosingRef.current = false;
       return;
