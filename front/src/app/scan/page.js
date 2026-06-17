@@ -65,7 +65,7 @@ export default function ScanPage() {
     let data = null;
     let lastError = null;
 
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 1; attempt++) {
       try {
         if (attempt > 0) await new Promise((r) => setTimeout(r, 2000 * attempt));
 
@@ -364,6 +364,7 @@ export default function ScanPage() {
     </div>
   );
 }
+
 
 
 

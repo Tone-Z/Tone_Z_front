@@ -4,7 +4,7 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const backendUrl = process.env.AI_BACKEND_URL || "http://127.0.0.1:8000";
-    const endpoint = "/diagnosis";
+    const endpoint = formData.has("files") ? "/diagnosis/video" : "/diagnosis";
 
     const res = await fetch(`${backendUrl}${endpoint}`, {
       method: "POST",
