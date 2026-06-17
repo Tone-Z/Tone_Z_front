@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const MAX_FRAME_COUNT = 7;
-const FRAME_CAPTURE_INTERVAL_MS = 500;
+const MAX_FRAME_COUNT = 24;
+const FRAME_CAPTURE_INTERVAL_MS = 60;
 
 export default function ScanPage() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function ScanPage() {
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
   const [errorPopup, setErrorPopup] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -49,78 +50,56 @@ export default function ScanPage() {
     });
   }, []);
 
-  const requestSingleFrameDiagnosis = useCallback(
-    async (fallbackBlob = null) => {
-      const blob = fallbackBlob || (await captureFrame());
-
-      if (!blob) {
-        throw new Error("이미지 캡처에 실패했어요.");
-      }
-
-      const formData = new FormData();
-      formData.append("file", blob, "capture.jpg");
-
-      const res = await fetch("/api/ai/diagnosis", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || data.error || !data.season) {
-        throw new Error(data.error || "단일 프레임 진단에 실패했어요.");
-      }
-
-      return data;
-    },
-    [captureFrame],
-  );
-
   const finishDiagnosis = useCallback(async () => {
     if (isDiagnosingRef.current) return;
 
     isDiagnosingRef.current = true;
+    setIsSubmitting(true);
 
     const frames = framesRef.current.slice(0, MAX_FRAME_COUNT);
     let data = null;
 
     try {
-      if (frames.length >= 2) {
-        const formData = new FormData();
+      const formData = new FormData();
 
-        frames.forEach((blob, index) => {
-          formData.append("files", blob, `frame-${index}.jpg`);
-        });
+      frames.forEach((blob, index) => {
+        formData.append("files", blob, `frame-${index}.jpg`);
+      });
 
-        const res = await fetch("/api/ai/diagnosis/video", {
-          method: "POST",
-          body: formData,
-        });
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 90000);
 
-        data = await res.json();
+      const res = await fetch("/api/ai/diagnosis", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
 
-        if (!res.ok || data.error || !data.season) {
-          throw new Error(data.error || "영상 기반 진단에 실패했어요.");
-        }
-      } else {
-        data = await requestSingleFrameDiagnosis(frames[0]);
+      window.clearTimeout(timeoutId);
+
+      data = await res.json();
+
+      if (!res.ok || data.error || !data.season) {
+        throw new Error(data.error || "영상 기반 진단에 실패했어요.");
       }
     } catch (videoError) {
-      try {
-        data = await requestSingleFrameDiagnosis(frames[0]);
-      } catch (singleError) {
-        stopCamera();
-        setErrorPopup(singleError.message || "진단 서버와 연결할 수 없어요.");
-        return;
-      }
+      stopCamera();
+      const message = videoError.name === "AbortError"
+        ? "진단 시간이 오래 걸리고 있어요. 다시 시도해주세요."
+        : videoError.message || "진단 서버와 연결할 수 없어요.";
+      setErrorPopup(message);
+      setIsSubmitting(false);
+      isDiagnosingRef.current = false;
+      return;
     }
 
     sessionStorage.setItem("diagnosisResult", JSON.stringify(data));
     sessionStorage.setItem("freshDiagnosis", "true");
 
+    setIsSubmitting(false);
     stopCamera();
     router.push(`/result/${data.season}`);
-  }, [requestSingleFrameDiagnosis, router, stopCamera]);
+  }, [router, stopCamera]);
 
   const startCamera = useCallback(async () => {
     try {
@@ -156,6 +135,8 @@ export default function ScanPage() {
   }, []);
 
   useEffect(() => {
+    sessionStorage.removeItem("diagnosisResult");
+    sessionStorage.removeItem("freshDiagnosis");
     setMounted(true);
   }, []);
 
@@ -214,8 +195,8 @@ export default function ScanPage() {
       {errorPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-[90%] max-w-[360px] rounded-2xl bg-white px-8 py-7 shadow-xl text-center">
-            <p className="mb-1 text-[14px] text-[#999]">조명이 밝은 곳에서</p>
-            <p className="mb-6 text-[14px] text-[#999]">정면을 바라보고 다시 시도해보세요 ♥</p>
+            <p className="text-[15px] font-bold text-[#555]">{errorPopup}</p>
+            <p className="mt-2 mb-6 text-[14px] text-[#999]">조명이 밝은 곳에서 정면을 바라보고 다시 시도해보세요 ♥</p>
             <button
               onClick={() => { setErrorPopup(""); window.location.reload(); }}
               className="w-full rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90 transition"
@@ -289,7 +270,7 @@ export default function ScanPage() {
             </div>
 
             <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 rounded-full bg-[#6f3e4b]/90 px-7 py-2 text-[17px] font-bold text-white">
-              ♥ 얼굴 인식 중...
+              {isSubmitting ? "♥ 결과 계산 중..." : "♥ 얼굴 인식 중..."}
             </div>
           </div>
         </div>
@@ -312,7 +293,7 @@ export default function ScanPage() {
 
           <div className="mt-5 flex justify-center">
             <div className="rounded-[16px] bg-[#fff4f6] px-10 py-4 text-[22px] font-bold text-[#1F1F1F]">
-              ♥ 퍼스널컬러를 측정 중이에요!
+              {isSubmitting ? "♥ 결과를 분석하고 있어요!" : "♥ 퍼스널컬러를 측정 중이에요!"}
             </div>
           </div>
         </div>
@@ -338,3 +319,10 @@ export default function ScanPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
