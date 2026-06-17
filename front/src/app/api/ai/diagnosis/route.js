@@ -1,98 +1,40 @@
 import { NextResponse } from "next/server";
 
-const VALID_SEASONS = [
-  "spring-light", "spring-bright", "spring-soft",
-  "summer-light", "summer-mute",
-  "autumn-mute", "autumn-deep",
-  "winter-bright", "winter-deep",
-];
-
-async function analyzePersonalColor(imageBase64) {
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "meta-llama/llama-4-scout-17b-16e-instruct",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${imageBase64}`,
-              },
-            },
-            {
-              type: "text",
-              text: `You are a Korean personal color (퍼스널컬러) expert. Analyze this person's face — skin undertone (warm/cool), contrast level, brightness, and saturation — and determine their personal color season type.
-
-Reply with ONLY one of these exact codes, nothing else:
-spring-light
-spring-bright
-spring-soft
-summer-light
-summer-mute
-autumn-mute
-autumn-deep
-winter-bright
-winter-deep`,
-            },
-          ],
-        },
-      ],
-      max_tokens: 20,
-      temperature: 0.2,
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.text().catch(() => "");
-    throw new Error(`Groq error ${res.status}: ${err}`);
-  }
-
-  const data = await res.json();
-  const content = data.choices?.[0]?.message?.content?.trim().toLowerCase() ?? "";
-
-  if (VALID_SEASONS.includes(content)) return content;
-
-  for (const season of VALID_SEASONS) {
-    if (content.includes(season)) return season;
-  }
-
-  return null;
-}
-
 export async function POST(request) {
   try {
     const formData = await request.formData();
+    const backendUrl = process.env.AI_BACKEND_URL || "http://127.0.0.1:8000";
     const files = formData.getAll("files");
 
-    if (files.length === 0) {
-      return NextResponse.json({ error: "이미지가 없어요." }, { status: 400 });
-    }
-
-    const pickIndices = [
-      Math.floor(files.length * 0.5),
-      Math.floor(files.length * 0.25),
-      Math.floor(files.length * 0.75),
-    ];
+    const pickIndices = files.length > 0
+      ? [Math.floor(files.length * 0.5), Math.floor(files.length * 0.25), Math.floor(files.length * 0.75)]
+      : [0, 0, 0];
 
     for (let attempt = 0; attempt < 3; attempt++) {
       if (attempt > 0) await new Promise((r) => setTimeout(r, 800));
-      try {
-        const file = files[pickIndices[attempt]] ?? files[0];
-        const arrayBuffer = await file.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-        const season = await analyzePersonalColor(base64);
-        if (season) return NextResponse.json({ season });
-      } catch (e) {
-        console.error(`Diagnosis attempt ${attempt + 1} failed:`, e?.message);
-      }
+      try {
+        const body = new FormData();
+        if (files.length > 0) {
+          const file = files[pickIndices[attempt]] || files[0];
+          body.append("file", file, "frame.jpg");
+        } else {
+          for (const [key, value] of formData.entries()) {
+            body.append(key, value);
+          }
+        }
+
+        const res = await fetch(`${backendUrl}/diagnosis`, {
+          method: "POST",
+          body,
+        });
+
+        const contentType = res.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) continue;
+
+        const data = await res.json();
+        if (res.ok && data.season) return NextResponse.json(data);
+      } catch {}
     }
 
     return NextResponse.json(
