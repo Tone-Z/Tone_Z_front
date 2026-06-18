@@ -209,7 +209,7 @@ export default function ReviewPage() {
         <img src="/img/Photo_Background.png" alt="" className="absolute inset-0 h-full w-full object-cover" style={{ zIndex: 0 }} />
         <div className="relative z-10 flex h-full flex-col">
           <div className="flex items-center justify-between px-8 py-2">
-            <a href="/photocard">
+            <a href="/">
               <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
             </a>
             <button

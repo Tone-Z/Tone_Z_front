@@ -118,7 +118,7 @@ export default function CameraPage() {
     <main className="relative h-screen overflow-hidden" style={{ backgroundImage: "url('/img/Photo_Background.png')", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex items-center justify-between px-8 py-2">
-          <a href="/photocard">
+          <a href="/">
             <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
           </a>
           <span className="text-[13px] text-[#bbb]">{photos.length} / {MAX}장</span>
