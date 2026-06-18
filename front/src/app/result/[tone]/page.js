@@ -8,6 +8,7 @@ import { toneData } from "../data";
 export default function ResultPage({ params }) {
   const { tone } = use(params);
   const data = toneData[tone];
+  const router = useRouter();
   const [userName, setUserName] = useState("사용자");
   const [chatOpen, setChatOpen] = useState(false);
 
