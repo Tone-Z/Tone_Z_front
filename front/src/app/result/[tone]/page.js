@@ -72,7 +72,7 @@ export default function ResultPage({ params }) {
     <main className="min-h-screen bg-[#e9e9e9]">
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
-        <div className="flex justify-center items-end" style={{ height: "100px", paddingBottom: "30px" }}>
+        <div className="flex justify-center items-center" style={{ height: "120px" }}>
           <button
             onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
             className="flex flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
