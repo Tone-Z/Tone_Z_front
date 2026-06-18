@@ -10,6 +10,7 @@ export default function ResultPage({ params }) {
   const { tone } = use(params);
   const data = toneData[tone];
   const router = useRouter();
+  const productModalOpenRef = useRef(false);
   const [userName, setUserName] = useState("사용자");
   const [chatOpen, setChatOpen] = useState(false);
 
@@ -17,14 +18,27 @@ export default function ResultPage({ params }) {
     const timer = { id: null };
     const reset = () => {
       clearTimeout(timer.id);
-      timer.id = setTimeout(() => router.push("/"), 30000);
+      timer.id = setTimeout(() => {
+        if (productModalOpenRef.current) {
+          reset();
+          return;
+        }
+
+        router.push("/");
+      }, 30000);
+    };
+    const handleProductModal = (event) => {
+      productModalOpenRef.current = Boolean(event.detail?.open);
+      reset();
     };
     const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
     events.forEach((e) => window.addEventListener(e, reset));
+    window.addEventListener("tonez-product-modal", handleProductModal);
     reset();
     return () => {
       clearTimeout(timer.id);
       events.forEach((e) => window.removeEventListener(e, reset));
+      window.removeEventListener("tonez-product-modal", handleProductModal);
     };
   }, [router]);
 
@@ -252,6 +266,22 @@ function MakeupSection({ data }) {
   }, [data.productItems]);
 
   const totalPage = Math.ceil(products.length / itemCount);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("tonez-product-modal", {
+        detail: { open: Boolean(selectedProduct) },
+      }),
+    );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("tonez-product-modal", {
+          detail: { open: false },
+        }),
+      );
+    };
+  }, [selectedProduct]);
 
   useEffect(() => {
     if (totalPage === 0) return;
