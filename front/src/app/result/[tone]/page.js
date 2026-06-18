@@ -194,7 +194,19 @@ function BestColor({ data }) {
       <button
         onClick={() => {
           const el = document.getElementById("bottom-bar");
-          if (el) window.scrollTo({ top: el.offsetTop, behavior: "smooth" });
+          if (!el) return;
+          const start = window.scrollY;
+          const end = el.offsetTop;
+          const duration = 900;
+          const startTime = performance.now();
+          const ease = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+          const step = (now) => {
+            const elapsed = now - startTime;
+            const t = Math.min(elapsed / duration, 1);
+            window.scrollTo(0, start + (end - start) * ease(t));
+            if (t < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
         }}
         className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
         style={{
