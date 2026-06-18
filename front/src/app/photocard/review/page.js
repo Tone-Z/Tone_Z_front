@@ -16,6 +16,21 @@ export default function ReviewPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const timer = { id: null };
+    const reset = () => {
+      clearTimeout(timer.id);
+      timer.id = setTimeout(() => router.push("/"), 30000);
+    };
+    const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => {
+      clearTimeout(timer.id);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [router]);
+
+  useEffect(() => {
     const storedPhotos = sessionStorage.getItem("photocard_photos");
     const storedFrame = sessionStorage.getItem("photocard_frame");
     if (storedPhotos) setPhotos(JSON.parse(storedPhotos));
