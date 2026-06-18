@@ -205,7 +205,8 @@ export default function ReviewPage() {
         </div>
       )}
 
-      <main className="relative h-screen overflow-hidden" style={{ backgroundImage: "url('/img/Photo_Background.png')", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
+      <main className="relative h-screen overflow-hidden">
+        <img src="/img/Photo_Background.png" alt="" className="absolute inset-0 h-full w-full object-cover" style={{ zIndex: 0 }} />
         <div className="relative z-10 flex h-full flex-col">
           <div className="flex items-center justify-between px-8 py-2">
             <a href="/photocard">
