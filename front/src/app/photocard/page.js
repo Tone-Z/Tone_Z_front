@@ -48,7 +48,7 @@ export default function PhotoCardPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#fde8f0]" style={{ backgroundImage: "url('/img/Photo_Page.png')", backgroundSize: "cover", backgroundPosition: "center top" }}>
+    <main className="relative min-h-screen bg-[#fde8f0]" style={{ backgroundImage: "url('/img/Photo_Page.webp')", backgroundSize: "cover", backgroundPosition: "center top" }}>
       <div className="flex items-center justify-between px-8 pt-8 pb-8">
         <a href="/">
           <img src="/img/logo.png" alt="Tone-Z" className="h-[clamp(36px,4vw,56px)]" />
