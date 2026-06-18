@@ -3,6 +3,7 @@
 import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { QRCodeCanvas } from "qrcode.react";
 import { toneData } from "../data";
 
 export default function ResultPage({ params }) {
@@ -17,7 +18,9 @@ export default function ResultPage({ params }) {
     if (stored) {
       try {
         const user = JSON.parse(stored);
-        if (user.nickname) setUserName(user.nickname);
+        if (user.nickname) {
+          setTimeout(() => setUserName(user.nickname), 0);
+        }
         if (sessionStorage.getItem("freshDiagnosis") === "true") {
           sessionStorage.removeItem("freshDiagnosis");
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnosis/save`, {
@@ -69,13 +72,15 @@ function getSeasonResultImg(tone) {
 }
 
 function ResultHeader({ data, userName, tone }) {
+  const router = useRouter();
+
   return (
     <section className="relative w-full overflow-hidden border-0">
       <div
         className="relative flex h-[88px] w-full items-center px-[40px] border-0"
         style={{ backgroundColor: data.headerBar }}
       >
-        <a href="/"><img src={getSeasonLogo(tone)} alt="Tone-Z" className="h-[42px]" /></a>
+        <Link href="/"><img src={getSeasonLogo(tone)} alt="Tone-Z" className="h-[42px]" /></Link>
 
         <div className="absolute left-1/2 top-[55px] z-10 -translate-x-1/2">
           <img src={getSeasonResultImg(tone)} alt="퍼스널컬러 진단 결과" className="h-auto w-[clamp(260px,26vw,400px)]" />
@@ -85,7 +90,7 @@ function ResultHeader({ data, userName, tone }) {
           className="ml-auto transition hover:opacity-80"
           onClick={() => {
             const stored = sessionStorage.getItem("loginUser");
-            window.location.href = stored ? "/mypage" : "/login?redirect=/mypage";
+            router.push(stored ? "/mypage" : "/login?redirect=/mypage");
           }}
         >
           <img src="/img/MyPage_button.png" alt="My Page" className="h-auto w-[clamp(100px,10vw,160px)]" />
@@ -175,6 +180,7 @@ function BestColor({ data }) {
 function MakeupSection({ data }) {
   const [page, setPage] = useState(0);
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const itemCount = 6;
 
   useEffect(() => {
@@ -261,10 +267,11 @@ function MakeupSection({ data }) {
               }
             >
               {currentItems.slice(row * 2, row * 2 + 2).map((item, index) => (
-                <a
+                <button
                   key={(item.link || item.title) + index}
-                  href={item.link || undefined}
-                  className="flex min-h-[135px] items-center gap-5 rounded-2xl border border-[#eee] bg-white px-6 py-4 shadow-sm"
+                  type="button"
+                  onClick={() => setSelectedProduct(item)}
+                  className="flex min-h-[135px] w-full items-center gap-5 rounded-2xl border border-[#eee] bg-white px-6 py-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   {item.image ? (
                     <img src={item.image} alt={item.title} className="h-24 w-24 shrink-0 object-contain" />
@@ -279,10 +286,70 @@ function MakeupSection({ data }) {
                     {item.shade && <p className="mt-1 text-[12px] font-medium text-[#555]">{item.shade}</p>}
                     {item.price && <p className="mt-2 text-[13px] font-bold text-[#555]">{Number(item.price).toLocaleString()}원</p>}
                   </div>
-                </a>
+                </button>
               ))}
             </div>
           ))}
+        </div>
+      )}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-6"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="w-full max-w-[460px] rounded-2xl bg-white px-7 py-6 text-center shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-5 flex items-start gap-5 text-left">
+              {selectedProduct.image ? (
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.title}
+                  className="h-28 w-28 shrink-0 object-contain"
+                />
+              ) : (
+                <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-[#ffeaea] text-[38px]">?뭵</div>
+              )}
+              <div className="min-w-0">
+                {selectedProduct.brand && (
+                  <p className="mb-1 text-[12px] font-semibold" style={{ color: data.badgeColor }}>
+                    {selectedProduct.brand}
+                  </p>
+                )}
+                <h3 className="text-[16px] font-bold leading-snug text-[#444]">{selectedProduct.title}</h3>
+                {selectedProduct.shade && (
+                  <p className="mt-2 text-[13px] font-medium text-[#666]">{selectedProduct.shade}</p>
+                )}
+                {selectedProduct.price && (
+                  <p className="mt-2 text-[14px] font-bold text-[#555]">
+                    {Number(selectedProduct.price).toLocaleString()}원
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mx-auto mb-4 flex h-[212px] w-[212px] items-center justify-center rounded-2xl border border-[#eee] bg-white">
+              {selectedProduct.link ? (
+                <QRCodeCanvas value={selectedProduct.link} size={180} />
+              ) : (
+                <p className="px-5 text-[13px] text-[#999]">상품 링크를 불러오지 못했어요.</p>
+              )}
+            </div>
+
+            <p className="mb-5 text-[13px] text-[#777]">
+              휴대폰 카메라로 QR을 스캔해 상품을 확인해보세요
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setSelectedProduct(null)}
+              className="w-full rounded-xl py-3 text-[14px] font-semibold text-white transition hover:opacity-90"
+              style={{ backgroundColor: data.badgeColor }}
+            >
+              닫기
+            </button>
+          </div>
         </div>
       )}
     </section>

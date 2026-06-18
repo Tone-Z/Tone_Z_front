@@ -1,3 +1,47 @@
+# dependencies
+node_modules/
+front/node_modules/
 back/node_modules/
+
+# Next.js build output
+front/.next/
+front/out/
+front/build/
+
+# environment and secrets
+.env
+.env.*
+front/.env
+front/.env.*
 back/.env
+back/.env.*
+!.env.example
+!front/.env.example
+!back/.env.example
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local uploads / generated files
+front/public/photocards/
+uploads/
+outputs/
+tmp/
+temp/
+
+# cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+front/next-env.d.ts
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 *.lnk
