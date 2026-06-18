@@ -42,6 +42,9 @@ export default function LoginPage() {
 
     return (
         <div className="login-wrap">
+            <a href="/" style={{ position: "fixed", top: "20px", right: "28px", zIndex: 100 }}>
+                <img src="/img/logo.png" alt="Tone-Z" style={{ width: "110px" }} />
+            </a>
             <div className="left">
                 <img
                     src="/img/login_signup.png"
@@ -51,7 +54,6 @@ export default function LoginPage() {
             </div>
 
             <div className="right">
-                <img src="/img/logo.png" alt="Tone-Z" style={{ width: "120px", marginBottom: "24px" }} />
                 <h1 className="title">로그인</h1>
 
                 <p className="desc">
