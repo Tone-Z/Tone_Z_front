@@ -240,11 +240,11 @@ export default function ScanPage() {
     <div className="relative min-h-screen overflow-hidden bg-[#FFF6F6]">
       {errorPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-[90%] max-w-[360px] rounded-2xl bg-white px-8 py-7 shadow-xl text-center">
-            <p className="text-[15px] font-bold text-[#555]">{errorPopup}</p>
+          <div className="w-[90%] max-w-[440px] rounded-2xl bg-white px-8 py-7 shadow-xl text-center">
+            <p className="text-[15px] font-bold text-[#555] whitespace-nowrap">{errorPopup}</p>
             <button
               onClick={() => { setErrorPopup(""); window.location.reload(); }}
-              className="w-full rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90 transition"
+              className="w-full mt-8 rounded-xl bg-gradient-to-r from-[#ffb7b1] to-[#ff7070] py-3 text-[13px] font-semibold text-white hover:opacity-90 transition"
             >
               다시 시도
             </button>
