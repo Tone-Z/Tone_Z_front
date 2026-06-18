@@ -72,6 +72,16 @@ export default function ResultPage({ params }) {
     <main className="min-h-screen bg-[#e9e9e9]">
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
+        <div className="flex justify-center py-5">
+          <button
+            onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
+            className="flex flex-col items-center gap-1 rounded-2xl px-8 py-3 text-white shadow-md transition hover:opacity-85 active:scale-95"
+            style={{ backgroundColor: data.badgeColor }}
+          >
+            <span className="text-[15px] font-semibold">인생네컷 찍기</span>
+            <span className="text-[18px] leading-none">∨</span>
+          </button>
+        </div>
         <BestColor data={data} />
         <MakeupSection data={data} />
         <VideoSection data={data} tone={tone} />
@@ -736,7 +746,7 @@ function BottomButtons({ data, tone, onChatOpen }) {
         </div>
       )}
 
-    <section className="relative flex justify-center px-[8%] pb-24">
+    <section id="bottom-bar" className="relative flex justify-center px-[8%] pb-24">
       <div className="relative flex w-full max-w-[850px] items-center justify-center px-5" style={{ backgroundImage: "url('/img/choice.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat", minHeight: "72px" }}>
         <button
           onClick={() => router.push("/scan")}
