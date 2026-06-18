@@ -192,7 +192,10 @@ function BestColor({ data }) {
       }}
     >
       <button
-        onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
+        onClick={() => {
+          const el = document.getElementById("bottom-bar");
+          if (el) window.scrollTo({ top: el.offsetTop, behavior: "smooth" });
+        }}
         className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
         style={{
           top: "calc(var(--best-color-top-gap) / 2)",
