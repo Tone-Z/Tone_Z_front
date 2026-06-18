@@ -27,6 +27,15 @@ export default function PhotoCardPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const timer = { id: null };
+    const reset = () => { clearTimeout(timer.id); timer.id = setTimeout(() => router.push("/"), 30000); };
+    const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => { clearTimeout(timer.id); events.forEach((e) => window.removeEventListener(e, reset)); };
+  }, [router]);
+
+  useEffect(() => {
     const tone = sessionStorage.getItem("user_tone");
     setSelected(toneToFrame(tone));
   }, []);

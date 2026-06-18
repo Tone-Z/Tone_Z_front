@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "./login.css";
 
 export default function LoginPage() {
     const router = useRouter();
+
+    useEffect(() => {
+        const timer = { id: null };
+        const reset = () => { clearTimeout(timer.id); timer.id = setTimeout(() => router.push("/"), 30000); };
+        const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
+        events.forEach((e) => window.addEventListener(e, reset));
+        reset();
+        return () => { clearTimeout(timer.id); events.forEach((e) => window.removeEventListener(e, reset)); };
+    }, [router]);
 
     const [nic, setNic] = useState("");
     const [pwd, setPwd] = useState("");

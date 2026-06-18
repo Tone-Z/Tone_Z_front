@@ -15,6 +15,15 @@ export default function CameraPage() {
   const startedRef = useRef(false);   // onloadedmetadata 중복 방지
   const router = useRouter();
 
+  useEffect(() => {
+    const timer = { id: null };
+    const reset = () => { clearTimeout(timer.id); timer.id = setTimeout(() => router.push("/"), 30000); };
+    const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => { clearTimeout(timer.id); events.forEach((e) => window.removeEventListener(e, reset)); };
+  }, [router]);
+
   const [frame, setFrame] = useState(null);
   const [slots, setSlots] = useState(null);
   const [photos, setPhotos] = useState([]);
