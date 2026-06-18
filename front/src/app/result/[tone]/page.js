@@ -72,16 +72,6 @@ export default function ResultPage({ params }) {
     <main className="min-h-screen bg-[#e9e9e9]">
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
-        <div className="flex justify-center items-center" style={{ height: "120px" }}>
-          <button
-            onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
-            className="flex flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
-            style={{ color: data.badgeColor }}
-          >
-            <span className="text-[15px] font-semibold">인생네컷 찍기</span>
-            <span className="text-[18px] leading-none">∨</span>
-          </button>
-        </div>
         <BestColor data={data} />
         <MakeupSection data={data} />
         <VideoSection data={data} tone={tone} />
@@ -194,7 +184,25 @@ function ResultHeader({ data, userName, tone }) {
 
 function BestColor({ data }) {
   return (
-    <section className="px-[8%] py-[6%]">
+    <section
+      className="relative px-[8%] pb-[6%]"
+      style={{
+        "--best-color-top-gap": "clamp(220px, 12vw, 260px)",
+        paddingTop: "var(--best-color-top-gap)",
+      }}
+    >
+      <button
+        onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
+        className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
+        style={{
+          top: "calc(var(--best-color-top-gap) / 2)",
+          color: data.badgeColor,
+        }}
+      >
+        <span className="text-[15px] font-semibold">인생네컷 찍기</span>
+        <span className="text-[18px] leading-none">∨</span>
+      </button>
+
       <h2 className="mb-10 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
         {data.koreanType} BEST COLOR
       </h2>
