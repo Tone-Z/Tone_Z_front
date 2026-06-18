@@ -199,8 +199,8 @@ function BestColor({ data }) {
           color: data.badgeColor,
         }}
       >
-        <span className="text-[15px] font-semibold">인생네컷 찍기</span>
-        <span className="text-[18px] leading-none">∨</span>
+        <span className="text-[18px] font-semibold">인생네컷 찍기</span>
+        <span className="text-[22px] leading-none">∨</span>
       </button>
 
       <h2 className="mb-10 text-[clamp(17px,1.6vw,28px)] font-bold" style={{ color: data.badgeColor }}>
