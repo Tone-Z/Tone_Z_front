@@ -33,12 +33,12 @@ export async function POST(request) {
     }
 
     return NextResponse.json(
-      { error: "진단 서버와 연결할 수 없어요." },
+      { error: "얼굴을 최대한 가까이 하고 카메라을 바라봐 주세요." },
       { status: 500 },
     );
   } catch (e) {
     return NextResponse.json(
-      { error: "진단 서버와 연결할 수 없어요." },
+      { error: "얼굴을 최대한 가까이 하고 카메라을 바라봐 주세요." },
       { status: 500 },
     );
   }
