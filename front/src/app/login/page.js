@@ -51,6 +51,7 @@ export default function LoginPage() {
             </div>
 
             <div className="right">
+                <img src="/img/logo.png" alt="Tone-Z" style={{ width: "120px", marginBottom: "24px" }} />
                 <h1 className="title">로그인</h1>
 
                 <p className="desc">
