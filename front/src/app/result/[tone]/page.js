@@ -72,11 +72,11 @@ export default function ResultPage({ params }) {
     <main className="min-h-screen bg-[#e9e9e9]">
       <div className="w-full bg-white">
         <ResultHeader data={data} userName={userName} tone={tone} />
-        <div className="flex justify-center py-5">
+        <div className="flex justify-center items-center" style={{ height: "80px" }}>
           <button
             onClick={() => document.getElementById("bottom-bar")?.scrollIntoView({ behavior: "smooth" })}
-            className="flex flex-col items-center gap-1 rounded-2xl px-8 py-3 text-white shadow-md transition hover:opacity-85 active:scale-95"
-            style={{ backgroundColor: data.badgeColor }}
+            className="flex flex-col items-center gap-1 transition hover:opacity-60 active:scale-95"
+            style={{ color: data.badgeColor }}
           >
             <span className="text-[15px] font-semibold">인생네컷 찍기</span>
             <span className="text-[18px] leading-none">∨</span>
