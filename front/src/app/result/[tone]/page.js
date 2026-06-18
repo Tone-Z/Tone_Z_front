@@ -9,8 +9,24 @@ import { toneData } from "../data";
 export default function ResultPage({ params }) {
   const { tone } = use(params);
   const data = toneData[tone];
+  const router = useRouter();
   const [userName, setUserName] = useState("사용자");
   const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = { id: null };
+    const reset = () => {
+      clearTimeout(timer.id);
+      timer.id = setTimeout(() => router.push("/"), 30000);
+    };
+    const events = ["mousemove", "scroll", "click", "touchstart", "keypress"];
+    events.forEach((e) => window.addEventListener(e, reset));
+    reset();
+    return () => {
+      clearTimeout(timer.id);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [router]);
 
   useEffect(() => {
     sessionStorage.setItem("user_tone", tone);
